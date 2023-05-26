@@ -4,7 +4,9 @@
   "description": "Backend services for Cards application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "build": "cd ../cards && npm install && npm run build"
   },
   "author": "David Russell",
   "license": "ISC",

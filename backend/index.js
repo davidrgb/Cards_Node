@@ -2,12 +2,19 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-app.use(express.static('../public'));
 
-app.get('*', function(req, res) {
-    res.sendFile(path.resolve('../public/index.html'));
+const port = 3010;
+
+app.use(express.static(path.resolve(__dirname, '../cards/build')));
+
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Test message.' });
 });
 
-app.listen(3010, () =>
-  console.log('Cards listening on port 3010!'),
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../cards/build', 'index.html'));
+});
+
+app.listen(port, () =>
+  console.log(`Cards listening on port ${port}!`),
 );
