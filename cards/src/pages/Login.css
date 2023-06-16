@@ -1,0 +1,119 @@
+.login {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100vh;
+    justify-content: center;
+}
+
+.stack {
+    height: 175px;
+    position: relative;
+    width: 250px
+}
+
+.card {
+    background-color: #5AB0FF;
+    border: 2px solid #1A1A1A;
+    border-radius: 5px;
+    height: 135px;
+    position: absolute;
+    width: 100px;
+}
+
+.left {
+    animation-timing-function: ease-out;
+    animation-delay: 0.1s;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-name: slide-left;
+    left: 0;
+    rotate: 0deg;
+    top: -500px;
+    z-index: 1;
+}
+
+@keyframes slide-left {
+    from {
+        rotate: 0deg;
+        top: -500px;
+    }
+    to {
+        rotate: -12deg;
+        top: -15px;
+    }
+}
+
+.center {
+    animation-timing-function: ease-out;
+    animation-delay: 0.3s;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-name: slide-center;
+    left: 75px;
+    rotate: 0deg;
+    top: -500px;
+    z-index: 2;
+}
+
+@keyframes slide-center {
+    from {top: -500px;}
+    to {top: 0;}
+}
+
+.right {
+    animation-timing-function: ease-out;
+    animation-delay: 0.2s;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-name: slide-right;
+    right: 0;
+    rotate: 0deg;
+    top: -500px;
+    z-index: 1;
+}
+
+@keyframes slide-right {
+    from {
+        rotate: 0deg;
+        top: -500px;
+    }
+    to {
+        rotate: 12deg;
+        top: -15px;
+    }
+}
+
+@keyframes fade-in {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.fade {
+    animation-timing-function: ease-out;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-name: fade-in;
+    opacity: 0;
+}
+
+.first-fade {
+    animation-delay: 0.5s;
+}
+
+.second-fade {
+    animation-delay: 0.6s;
+}
+
+.third-fade {
+    animation-delay: 0.7s;
+}
+
+.fourth-fade {
+    animation-delay: 0.8s;
+}
+
+.fifth-fade {
+    animation-delay: 0.9s;
+}
