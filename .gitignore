@@ -1,1 +1,4 @@
 /backend/node_modules
+
+#MySQL credentials
+/backend/credentials.json
