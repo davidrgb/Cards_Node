@@ -8,14 +8,16 @@ import Login from './pages/Login.js';
 import Home from './pages/Home.js';
 import NoPage from './pages/NoPage.js';
 
+import RequireAuth from './components/RequireAuth';
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="*" element={<NoPage />} />
+          <Route index element={<RequireAuth target="/"><Home /></RequireAuth>} />
+          <Route path="*" element={<RequireAuth><NoPage /></RequireAuth>} />
         </Route>
       </Routes>
     </BrowserRouter>

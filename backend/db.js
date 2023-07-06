@@ -5,6 +5,7 @@ const connection = mysql.createConnection({
   user: credentials.user,
   password: credentials.password,
   database: credentials.database,
+  charset: 'utf8'
 });
 
 connection.connect(function(err) {
@@ -12,4 +13,4 @@ connection.connect(function(err) {
     console.log("Connected to database!");
 });
 
-module.exports = db;
+module.exports = connection;

@@ -1,15 +1,19 @@
 import { Outlet, Link } from "react-router-dom";
 
+import LogOutButton from "../components/LogOutButton"; 
+
+import './Layout.css';
+
 export default function Layout() {
   return (
     <>
       <nav>
-        <ul>
+        <ul className="nav-row">
           <li>
-            <Link to="/">Home</Link>
+            <Link to="/"><button className="home-button">Home</button></Link>
           </li>
           <li>
-            Log Out
+            <LogOutButton />
           </li>
         </ul>
       </nav>
