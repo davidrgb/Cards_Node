@@ -9,6 +9,7 @@ import Home from './pages/Home.js';
 import NoPage from './pages/NoPage.js';
 
 import RequireAuth from './components/RequireAuth';
+import Deck from './pages/Deck';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<RequireAuth target="/"><Home /></RequireAuth>} />
+          <Route path="/deck/:deckId" element={<Deck />} />
           <Route path="*" element={<RequireAuth><NoPage /></RequireAuth>} />
         </Route>
       </Routes>

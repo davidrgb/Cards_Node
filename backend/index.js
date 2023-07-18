@@ -44,6 +44,37 @@ app.use(passport.authenticate('session'));
 let authRouter = require('./auth');
 app.use('/', authRouter);
 
+app.post('/api/create/deck', (req, res) => {
+  if (req.session.passport === undefined) return res.json({ error: 'Failed to create deck: authentication failure' });
+  let username = req.session.passport.user.username;
+  connection.query('select uuid()', function (err, row) {
+    let id = row[0]['uuid()'];
+    connection.query('INSERT INTO decks (owner, id, title, description) VALUES (?, ?, ?, ?)', [
+      username,
+      id,
+      req.body.title,
+      req.body.description,
+    ], function (err) {
+      if (err) return;
+      return res.json({ username: username, id: id });
+    })
+  });
+});
+
+app.get('/api/deck/:deckId', function (req, res) {
+  if (req.session.passport === undefined) return res.json({ error: 'Failed to read deck: authentication failure' });
+  connection.query('SELECT * FROM decks WHERE id = ? LIMIT 1', [req.params.deckId], function (err, row) {
+    let deck = row[0];
+    return res.json({ 
+      owner: deck['owner'],
+      id: deck['id'],
+      title: deck['title'],
+      description: deck['description'],
+      ts: deck['ts']
+    });
+  });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../cards', 'build', 'index.html'));
 });

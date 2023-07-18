@@ -1,0 +1,15 @@
+.create-deck-modal {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    gap: 3rem;
+    height: 100vh;
+    inset: 0;
+    justify-content: center;
+    overflow: visible;
+    position: fixed;
+    width: 100vw;
+    z-index: 999;
+}

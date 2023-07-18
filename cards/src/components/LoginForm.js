@@ -1,4 +1,4 @@
-import './LoginForm.css';
+import './Form.css';
 
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -27,22 +27,22 @@ export default function LoginForm() {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
-    let signUpButtonClassNames = 'fade fourth-fade login-form-button';
-    let logInButtonClassNames = 'fade fifth-fade login-form-button';
+    let signUpButtonClassNames = 'fade fourth-fade form-button';
+    let logInButtonClassNames = 'fade fifth-fade form-button';
 
     function displayErrorMessage() {
         if (error !== '') {
             setErrorStyle({
                 display: 'block',
             });
-            signUpButtonClassNames = 'fade fifth-fade login-form-button';
-            logInButtonClassNames = 'fade sixth-fade login-form-button';
+            signUpButtonClassNames = 'fade fifth-fade form-button';
+            logInButtonClassNames = 'fade sixth-fade form-button';
         }
     }
 
     function hideErrorMessage() {
         if (error === '') {
-            setError({
+            setErrorStyle({
                 display: 'none',
             });
         }
@@ -138,15 +138,15 @@ export default function LoginForm() {
     // Fade classes used for animations on Login page
 
     return (
-        <form className="login-form" id="login-form" onSubmit={handleSubmit}>
-            <div className="login-form-group">
-                <input className='fade second-fade login-form-input' type="text" name="username" placeholder="Username"></input>
-                <input className='fade third-fade login-form-input' type="password" name="password" placeholder="Password"></input>
+        <form className="form" id="login-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+                <input className='fade second-fade form-input' type="text" name="username" placeholder="Username"></input>
+                <input className='fade third-fade form-input' type="password" name="password" placeholder="Password"></input>
             </div>
-            <div className="fade fourth-fade login-form-error" style={errorStyle}>
+            <div className="fade fourth-fade form-error" style={errorStyle}>
                 {error}
             </div>
-            <div className="login-form-group">
+            <div className="form-group">
                 <button className={signUpButtonClassNames} type="submit" onClick={handleSignUpClick}>Sign Up</button>
                 <button className={logInButtonClassNames} type="submit" onClick={handleLogInClick}>Login</button>
             </div>

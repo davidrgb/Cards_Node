@@ -1,4 +1,4 @@
-.login-form {
+form {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -8,7 +8,7 @@
     width: 100vw;
 }
 
-.login-form-group {
+.form-group {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -18,7 +18,7 @@
     width: 40vw;
 }
 
-.login-form-input {
+form input {
     background-color: #1A1A1A;
     border: none;
     border-bottom: 0.5px solid #5AB0FF;
@@ -33,21 +33,46 @@
     transition-duration: 0.2s;
 }
 
-.login-form-input::placeholder {
+form input::placeholder {
     color: lightgrey;
 }
 
-.login-form-input:focus {
+form input:focus {
     border-bottom: 3px solid #5AB0FF;
 }
 
-.login-form-error {
-    color: red;
-    display: none;
-    font-size: 1.25rem;;
+form textarea {
+    background-color: #1A1A1A;
+    border: none;
+    border-bottom: 0.5px solid #5AB0FF;
+    border-radius: 0;
+    color: white;
+    font-size: 1.25rem;
+    outline: none;
+    padding: 5px;
+    resize: none;
+    width: 100%;
+    text-align: center;
+    transition: all is ease;
+    transition-duration: 0.2s;
 }
 
-.login-form-button {
+form textarea::placeholder {
+    color: lightgrey;
+}
+
+form textarea:focus {
+    border-bottom: 3px solid #5AB0FF;
+}
+
+.form-error {
+    color: red;
+    display: none;
+    font-size: 1.25rem;
+    ;
+}
+
+form button {
     background-color: #5AB0FF;
     border: 1px solid #5AB0FF;
     border-radius: 5px;
@@ -60,7 +85,7 @@
     width: 100%;
 }
 
-.login-form-button:hover {
+form button:hover {
     background-color: #1A1A1A;
     color: #5AB0FF;
 }
