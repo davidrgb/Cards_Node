@@ -1,30 +1,28 @@
 export class Deck {
-    constructor(data) {
-        this.title = data.title,
-        this.description = data.description,
-        this.timestamp = data.timestamp,
-        this.creator = data.creator;
+    constructor(data) {   
+        this.owner = data.owner;
         this.id = data.id;
-        this.sharedEditors = data.sharedEditors;
-        this.sharedViewers = data.sharedViewers;
-    }
+        this.title = data.title;
+        this.description = data.description;
+        this.ts = data.ts;
+        this.sharedUsers = data.sharedUsers;
+    };
 
     serialize() {
         return {
+            owner: this.owner,
+            id: this.id,
             title: this.title,
             description: this.description,
-            timestamp: this.timestamp,
-            creator: this.creator,
-            id: this.id,
-            sharedEditors: this.sharedEditors,
-            sharedViewers: this.sharedViewers,
+            ts: this.ts,
+            sharedUsers: [...this.sharedUsers],
         };
-    }
+    };
 
     deserialize(data) {
         const d = new Deck(data);
-        d.sharedEditors = this.sharedEditors;
-        d.sharedViewers = this.sharedViewers;
+        d.sharedUsers = [...this.sharedUsers];
         return d;
-    }
-}
+    };
+};
+

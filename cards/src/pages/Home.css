@@ -1,3 +1,13 @@
+.deck-list {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: center;
+    padding: 0;
+    width: 100%;
+}
+
 .create-deck-modal {
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);

@@ -61,16 +61,57 @@ app.post('/api/create/deck', (req, res) => {
   });
 });
 
+app.get('/api/decks', function (req, res) {
+  if (req.session.passport === undefined) return res.json({ error: 'Failed to read deck: authentication failure' });
+  let decks = [];
+  connection.query('SELECT * FROM decks WHERE owner = ?', [req.session.passport.user.username], function (err, ownedDecks) {
+    ownedDecks.forEach(deck => {
+      decks.push(deck);
+    });
+    connection.query('SELECT * FROM shared_users WHERE username = ?', [req.session.passport.user.username], function (err, sharedDeckIDs) {
+      if (sharedDeckIDs.length === 0) return res.json(decks);
+      sharedDeckIDs.forEach(sharedDeckID => {
+        connection.query('SELECT * FROM decks WHERE id = ?', [sharedDeckID.deck_id], function (err, sharedDecks) {
+          sharedDecks.forEach(deck => {
+            decks.push(deck);
+          });
+          return res.json(decks);
+        });
+      });
+    });
+  });
+
+});
+
 app.get('/api/deck/:deckId', function (req, res) {
   if (req.session.passport === undefined) return res.json({ error: 'Failed to read deck: authentication failure' });
   connection.query('SELECT * FROM decks WHERE id = ? LIMIT 1', [req.params.deckId], function (err, row) {
     let deck = row[0];
-    return res.json({ 
-      owner: deck['owner'],
-      id: deck['id'],
-      title: deck['title'],
-      description: deck['description'],
-      ts: deck['ts']
+    if (deck['owner'] === req.session.passport.user.username) {
+      return res.json({
+        owner: deck['owner'],
+        id: deck['id'],
+        title: deck['title'],
+        description: deck['description'],
+        ts: deck['ts']
+      });
+    }
+    connection.query('SELECT * FROM shared_users WHERE deck_id = ?', [deck['id']], function (err, sharedUsers) {
+      let isSharedUser = false;
+      sharedUsers.forEach(user => {
+        if (user.username === req.session.passport.user.username) isSharedUser = true;
+      });
+      return isSharedUser
+        ?
+        res.json({
+          owner: deck['owner'],
+          id: deck['id'],
+          title: deck['title'],
+          description: deck['description'],
+          ts: deck['ts']
+        })
+        :
+        res.json({ error: 'Failed to read deck: authentication failure' });
     });
   });
 });

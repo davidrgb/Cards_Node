@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from "react-dom";
 import { useNavigate } from 'react-router-dom';
 
@@ -9,8 +9,25 @@ import CloseIcon from '@mui/icons-material/Close';
 import './Home.css';
 import '../components/Form.css';
 
+import { Deck } from '../data/Deck.js';
+import DeckView from '../components/DeckView';
+
 export default function Home() {
     const target = '/';
+
+    const [decks, setDecks] = useState([]);
+
+    useEffect(() => {
+        const getDecks = async () => await fetch(`/api/decks`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(deck => {
+                    let d = new Deck(deck);
+                    setDecks(decks => [...decks, d]);
+                });
+            });
+        getDecks();
+    }, []);
 
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -23,8 +40,20 @@ export default function Home() {
     }
 
     return (
-        <div className='home'>
-            <h1>Home</h1>
+        <div>
+            <h1>Decks</h1>
+            {decks.length > 0 ?
+                <ul className="deck-list">
+                    {
+                        decks.map((deck, index) => {
+                            return <DeckView deck={deck} />
+                        })
+                    }
+                </ul> :
+                <div>
+                    <h2>Nothing to show yet</h2>
+                </div>
+            }
             <CircularButton innerHTML={<AddIcon />} handleClick={openModal} />
             {modalOpen && <CreateDeckModal closeModal={closeModal} />}
         </div>

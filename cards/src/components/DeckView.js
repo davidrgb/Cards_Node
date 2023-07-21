@@ -1,22 +1,19 @@
 import './DeckView.css';
 
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-export default function DeckView() {
+export default function DeckView({ deck }) {
     const navigate = useNavigate();
-    const { state } = useLocation();
-    const { deck } = state ? state : null;
 
     function openDeck() {
-        return navigate(`/deck/${deck.creator}/${id}`);
+        return navigate(`/deck/${deck.id}`);
     }
 
     return (
-        deck ? 
         <div className="deck-div" onClick={openDeck}>
-            
-        </div> : 
-        <div></div>
-    )
+            <div>{deck.title}</div>
+            {deck.description && <div className="deck-description">{deck.description}</div>}
+            <div className="deck-timestamp">{new Date(deck.ts).toLocaleString()}</div>
+        </div>
+    );
 }

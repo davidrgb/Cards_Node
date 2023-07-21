@@ -1,0 +1,27 @@
+.deck-div {
+    align-items: start;
+    background-color: #5AB0FF;
+    border: 1px solid #5AB0FF;
+    color: #1A1A1A;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    justify-content: center;
+    padding: 10px;
+    transition: all is ease;
+    transition-duration: 0.2s;
+    width: 30vw;
+}
+
+.deck-description {
+    font-size: 1rem;
+}
+
+.deck-timestamp {
+    font-size: 1rem;
+}
+
+.deck-div:hover {
+    background-color: #1A1A1A;
+    color: #5AB0FF;
+}

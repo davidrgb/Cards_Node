@@ -1,10 +1,13 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
 
 export default function RequireAuth({ children, target='/' }) {
+    let { deckId } = useParams();
     const navigate = useNavigate();
     const [authenticated, setAuthenticated] = useState();
+
+    if (target === '/deck') target += `/${deckId}`;
 
     const requestOptions = {
         method: 'GET',
