@@ -116,6 +116,16 @@ app.get('/api/deck/:deckId', function (req, res) {
   });
 });
 
+app.post('/api/update/deck/:deckId', function (req, res) {
+  if (req.session.passport === undefined) return res.json({ error: 'Failed to update deck: authentication failure' });
+  connection.query('UPDATE decks SET title = ?, description = ? WHERE id = ?',
+    [req.body.title, req.body.description, req.params.deckId],
+    function (err) {
+      if (err) return res.json({ error: err });
+      return res.json({ message: 'success'});
+    });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../cards', 'build', 'index.html'));
 });

@@ -8,7 +8,7 @@
     width: 100%;
 }
 
-.create-deck-modal {
+.deck-modal {
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
