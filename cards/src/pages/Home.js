@@ -23,7 +23,7 @@ export default function Home() {
             .then(data => {
                 data.forEach(deck => {
                     let d = new Deck(deck);
-                    setDecks(decks => [...decks, d].sort((a, b) => { return Date.parse(b.ts) - Date.parse(a.ts)}));
+                    setDecks(decks => [...decks, d].sort((a, b) => { return Date.parse(b.ts) - Date.parse(a.ts) }));
                 });
             })
         getDecks();
@@ -32,6 +32,8 @@ export default function Home() {
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editIndex, setEditIndex] = useState(0);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(0);
 
     const openCreateModal = () => {
         setCreateModalOpen(true);
@@ -50,6 +52,15 @@ export default function Home() {
         setEditModalOpen(false);
     }
 
+    const openDeleteModal = (index) => {
+        setDeleteIndex(index);
+        setDeleteModalOpen(true);
+    }
+
+    const closeDeleteModal = () => {
+        setDeleteModalOpen(false);
+    }
+
     return (
         <div>
             <h1>Decks</h1>
@@ -57,7 +68,11 @@ export default function Home() {
                 <ul className="deck-list">
                     {
                         decks.map((deck, index) => {
-                            return <div><DeckView deck={deck} /><button onClick={() => openEditModal(index)}>Edit</button></div>
+                            return <div>
+                                <DeckView deck={deck} />
+                                <button onClick={() => openEditModal(index)}>Edit</button>
+                                <button onClick={() => openDeleteModal(index)}>Delete</button>
+                            </div>
                         })
                     }
                 </ul> :
@@ -68,6 +83,7 @@ export default function Home() {
             <CircularButton innerHTML={<AddIcon />} handleClick={openCreateModal} />
             {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} />}
             {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
+            {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
         </div>
     );
 }
@@ -170,7 +186,7 @@ function CreateDeckModal({ closeModal }) {
             .then(response => response.json())
             .then(data => {
                 if (data.error !== undefined && data.error !== null) {
-                    setError(`Failed to create deck: ${data.error}`);
+                    setError(`${data.error}`);
                     displayErrorMessage();
                 }
                 else return navigate(`/deck/${data.id}`);
@@ -293,7 +309,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
             .then(response => response.json())
             .then(data => {
                 if (data.error !== undefined && data.error !== null) {
-                    setError(`Failed to update deck: ${data.error}`);
+                    setError(`${data.error}`);
                     displayErrorMessage();
                 }
                 else {
@@ -307,21 +323,98 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
             });
     }
 
-    const [temp, setTemp] = useState({title: decks[index].title, description: decks[index].description});
+    const [temp, setTemp] = useState({ title: decks[index].title, description: decks[index].description });
 
     return createPortal(
         <div className="deck-modal">
             <form id="edit-deck-modal-form" onSubmit={handleSubmit}>
                 <CircularButton innerHTML={<CloseIcon />} handleClick={handleClick} />
                 <div className="form-group">
-                    <input type="text" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({title: e.target.value, description: temp.description})}></input>
-                    <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({title: temp.title, description: e.target.value})}></textarea>
+                    <input type="text" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })}></input>
+                    <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })}></textarea>
                 </div>
                 <div className="form-error" style={errorStyle}>
                     {error}
                 </div>
                 <div className="form-group">
                     <button type="submit">Update</button>
+                </div>
+            </form>
+        </div>,
+        document.body
+    );
+}
+
+function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
+    const [error, setError] = useState();
+    const [errorStyle, setErrorStyle] = useState();
+
+    const handleClick = () => {
+        closeModal();
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        deleteDeck();
+    }
+
+    function displayErrorMessage() {
+        if (error !== '') {
+            setErrorStyle({
+                display: 'block',
+            });
+        }
+    }
+
+    function hideErrorMessage() {
+        if (error === '') {
+            setErrorStyle({
+                display: 'none',
+            });
+        }
+    }
+
+    function errorHandling() {
+        if (error !== '') {
+            setError('');
+            hideErrorMessage();
+        }
+    }
+
+    function deleteDeck() {
+        errorHandling();
+
+        const requestOptions = {
+            method: 'POST',
+        };
+        fetch(`/api/delete/deck/${decks[index].id}`, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error !== undefined && data.error !== null) {
+                    setError(`${data.error}`);
+                    displayErrorMessage();
+                }
+                else {
+                    let copy = [...decks];
+                    copy.splice(index, 1);
+                    setDecks([...copy]);
+                    closeModal();
+                }
+            });
+    }
+
+    return createPortal(
+        <div className="deck-modal">
+            <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
+                <CircularButton innerHTML={<CloseIcon />} handleClick={handleClick} />
+                <div className="form-group">
+                    Delete {decks[index].title}?
+                </div>
+                <div className="form-error" style={errorStyle}>
+                    {error}
+                </div>
+                <div className="form-group">
+                    <button type="submit">Delete</button>
                 </div>
             </form>
         </div>,

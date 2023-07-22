@@ -118,13 +118,33 @@ app.get('/api/deck/:deckId', function (req, res) {
 
 app.post('/api/update/deck/:deckId', function (req, res) {
   if (req.session.passport === undefined) return res.json({ error: 'Failed to update deck: authentication failure' });
-  connection.query('UPDATE decks SET title = ?, description = ? WHERE id = ?',
-    [req.body.title, req.body.description, req.params.deckId],
-    function (err) {
-      if (err) return res.json({ error: err });
-      return res.json({ message: 'success'});
-    });
+  connection.query('SELECT * FROM decks WHERE id = ? LIMIT 1', [req.params.deckId], function (err, row) {
+    let deck = row[0];
+    if (deck['owner'] === req.session.passport.user.username) {
+      connection.query('UPDATE decks SET title = ?, description = ? WHERE id = ?',
+        [req.body.title, req.body.description, req.params.deckId],
+        function (err) {
+          if (err) return res.json({ error: err });
+          return res.json({ message: 'success' });
+        });
+    }
+    else return res.json({ error: 'Failed to update deck: authentication failure' });
+  });
 });
+
+app.post('/api/delete/deck/:deckId', function (req, res) {
+  if (req.session.passport === undefined) return res.json({ error: 'Failed to delete deck: authentication failure' });
+  connection.query('SELECT * FROM decks WHERE id = ? LIMIT 1', [req.params.deckId], function (err, row) {
+    let deck = row[0];
+    if (deck['owner'] === req.session.passport.user.username) {
+      connection.query('DELETE FROM decks WHERE id = ?', [req.params.deckId], function (err) {
+        if (err) return res.json({ error: err });
+        else return res.json({ message: 'success' });
+      })
+    }
+    else return res.json({ error: 'Failed to delete deck: authentication failure' });
+  });
+})
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../cards', 'build', 'index.html'));
