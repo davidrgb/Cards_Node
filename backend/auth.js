@@ -81,10 +81,12 @@ router.post('/login/password',
 );
 
 router.get('/session', function (req, res) {
-    if (req.session.passport === undefined) return res.redirect('/login');
-    let username = req.session.passport.user.username;
-    if (username === undefined || username === null) return res.redirect('/login');
-    else res.json({ message: 'Authenticated' });
+    if (req.session.passport === undefined || req.session.passport.user === undefined) return res.redirect('/login');
+    else {
+        let username = req.session.passport.user.username;
+        if (username === undefined || username === null) return res.redirect('/login');
+        else res.json({ message: 'Authenticated' });
+    }
 });
 
 module.exports = router;

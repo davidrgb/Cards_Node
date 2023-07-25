@@ -1,6 +1,8 @@
-import './LogOutButton.css';
-
 import { useNavigate } from 'react-router-dom';
+
+import LogoutIcon from '@mui/icons-material/Logout';
+
+import './Button.css';
 
 export default function LogOutButton() {
     const navigate = useNavigate();
@@ -10,12 +12,10 @@ export default function LogOutButton() {
             method: 'POST',
         };
         fetch('/logout', requestOptions)
-            .then(response => {
-                navigate('/login', { state: { target: '/' } });
-            });
+            .then(navigate('/login', { state: { target: '/' } }));
     }
 
     return (
-        <button className="log-out-button" onClick={handleLogOutClick}>Log Out</button>
+        <button className="rounded-square-button" onClick={handleLogOutClick}><LogoutIcon /></button>
     );
 }

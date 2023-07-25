@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
+
 import { createPortal } from "react-dom";
+
 import { useNavigate } from 'react-router-dom';
 
-import CircularButton from "../components/CircularButton";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-
-import './Home.css';
-import '../components/Form.css';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { Deck } from '../data/Deck.js';
+
 import DeckView from '../components/DeckView';
+
+import '../components/Button.css';
+import '../components/Form.css';
+
+import './Home.css';
 
 export default function Home() {
     const target = '/';
@@ -62,16 +68,18 @@ export default function Home() {
     }
 
     return (
-        <div>
+        <div className="home-wrapper">
             <h1>Decks</h1>
             {decks.length > 0 ?
                 <ul className="deck-list">
                     {
                         decks.map((deck, index) => {
-                            return <div>
+                            return <div className="deck-row">
                                 <DeckView deck={deck} />
-                                <button onClick={() => openEditModal(index)}>Edit</button>
-                                <button onClick={() => openDeleteModal(index)}>Delete</button>
+                                <div className="button-column">
+                                    <button className="square-button" onClick={() => openEditModal(index)}><EditIcon /></button>
+                                    <button className="square-button" onClick={() => openDeleteModal(index)}><DeleteIcon /></button>
+                                </div>
                             </div>
                         })
                     }
@@ -80,7 +88,7 @@ export default function Home() {
                     <h2>Nothing to show yet</h2>
                 </div>
             }
-            <CircularButton innerHTML={<AddIcon />} handleClick={openCreateModal} />
+            <button className="circular-button" onClick={openCreateModal}><AddIcon /></button>
             {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} />}
             {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
             {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
@@ -194,20 +202,22 @@ function CreateDeckModal({ closeModal }) {
     }
 
     return createPortal(
-        <div className="deck-modal">
-            <form id="create-deck-modal-form" onSubmit={handleSubmit}>
-                <CircularButton innerHTML={<CloseIcon />} handleClick={handleClick} />
-                <div className="form-group">
-                    <input type="text" name="title" placeholder="Title" maxlength="250"></input>
-                    <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5"></textarea>
-                </div>
-                <div className="form-error" style={errorStyle}>
-                    {error}
-                </div>
-                <div className="form-group">
-                    <button type="submit">Create</button>
-                </div>
-            </form>
+        <div className="deck-modal-wrapper">
+            <div className="deck-modal">
+                <form id="create-deck-modal-form" onSubmit={handleSubmit}>
+                    <button className="circular-button" onClick={handleClick}><CloseIcon /></button>
+                    <div className="form-group">
+                        <input type="text" name="title" placeholder="Title" maxlength="250"></input>
+                        <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5"></textarea>
+                    </div>
+                    <div className="form-error" style={errorStyle}>
+                        {error}
+                    </div>
+                    <div className="form-group">
+                        <button type="submit">Create</button>
+                    </div>
+                </form>
+            </div>
         </div>,
         document.body
     );
@@ -326,20 +336,22 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
     const [temp, setTemp] = useState({ title: decks[index].title, description: decks[index].description });
 
     return createPortal(
-        <div className="deck-modal">
-            <form id="edit-deck-modal-form" onSubmit={handleSubmit}>
-                <CircularButton innerHTML={<CloseIcon />} handleClick={handleClick} />
-                <div className="form-group">
-                    <input type="text" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })}></input>
-                    <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })}></textarea>
-                </div>
-                <div className="form-error" style={errorStyle}>
-                    {error}
-                </div>
-                <div className="form-group">
-                    <button type="submit">Update</button>
-                </div>
-            </form>
+        <div className="deck-modal-wrapper">
+            <div className="deck-modal">
+                <form id="edit-deck-modal-form" onSubmit={handleSubmit}>
+                    <button className="circular-button" onClick={handleClick}><CloseIcon /></button>
+                    <div className="form-group">
+                        <input type="text" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })}></input>
+                        <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })}></textarea>
+                    </div>
+                    <div className="form-error" style={errorStyle}>
+                        {error}
+                    </div>
+                    <div className="form-group">
+                        <button type="submit">Update</button>
+                    </div>
+                </form>
+            </div>
         </div>,
         document.body
     );
@@ -404,19 +416,21 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
     }
 
     return createPortal(
-        <div className="deck-modal">
-            <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
-                <CircularButton innerHTML={<CloseIcon />} handleClick={handleClick} />
-                <div className="form-group">
-                    Delete {decks[index].title}?
-                </div>
-                <div className="form-error" style={errorStyle}>
-                    {error}
-                </div>
-                <div className="form-group">
-                    <button type="submit">Delete</button>
-                </div>
-            </form>
+        <div className="deck-modal-wrapper">
+            <div className="deck-modal">
+                <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
+                    <button className="circular-button" onClick={handleClick}><CloseIcon /></button>
+                    <div className="form-group">
+                        Delete {decks[index].title}?
+                    </div>
+                    <div className="form-error" style={errorStyle}>
+                        {error}
+                    </div>
+                    <div className="form-group">
+                        <button type="submit">Delete</button>
+                    </div>
+                </form>
+            </div>
         </div>,
         document.body
     );

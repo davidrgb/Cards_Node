@@ -1,12 +1,13 @@
-import './Form.css';
-
 import { useState } from 'react';
+
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import './Form.css';
 
 export default function LoginForm() {
     const { state } = useLocation();
     const { target } = state ? state : '/';
-    var createAccount = false;
+    let createAccount = false;
 
     function handleSignUpClick(e) {
         createAccount = true;

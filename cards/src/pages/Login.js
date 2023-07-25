@@ -1,10 +1,12 @@
-import './Login.css';
-
-import LoginForm from '../components/LoginForm';
+import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import LoginForm from '../components/LoginForm';
+
+import '../components/Fade.css';
+
+import './Login.css';
 
 export default function Login() {
     const navigate = useNavigate();

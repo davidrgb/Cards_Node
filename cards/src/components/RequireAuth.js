@@ -1,6 +1,6 @@
-import { useNavigate, useParams } from 'react-router-dom';
-
 import { useEffect, useState } from 'react';
+
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function RequireAuth({ children, target='/' }) {
     let { deckId } = useParams();
@@ -9,12 +9,8 @@ export default function RequireAuth({ children, target='/' }) {
 
     if (target === '/deck') target += `/${deckId}`;
 
-    const requestOptions = {
-        method: 'GET',
-    };
-
     useEffect(() => {
-        const getAuthenticated = async () => await fetch('/session', requestOptions)
+        const getAuthenticated = async () => await fetch('/session')
             .then(response => {
                 setAuthenticated(response.redirected === false);
             });

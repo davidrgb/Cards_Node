@@ -1,0 +1,47 @@
+button {
+    background-color: #5AB0FF;
+    border: none;
+    color: #1A1A1A;
+    cursor: pointer;
+    transition: all is ease;
+    transition-duration: 0.2s;
+}
+
+button:hover {
+    background-color: #3e7db8;
+}
+
+.circular-button {
+    align-items: center;
+    border-radius: 50%;
+    color: #1A1A1A;
+    display: inline-flex;
+    font-size: 1.5rem;
+    height: 3rem;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+    width: 3rem;
+}
+
+.rounded-square-button {
+    align-items: center;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    height: 3rem;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+    width: 3rem;
+}
+
+.square-button {
+    align-items: center;
+    font-size: 1.5rem;
+    height: 3rem;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+    width: 3rem;
+}
+

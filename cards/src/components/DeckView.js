@@ -1,6 +1,6 @@
-import './DeckView.css';
-
 import { useNavigate } from 'react-router-dom';
+
+import './DeckView.css';
 
 export default function DeckView({ deck }) {
     const navigate = useNavigate();

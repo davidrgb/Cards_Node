@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -7,9 +6,11 @@ import Layout from './pages/Layout.js';
 import Login from './pages/Login.js';
 import Home from './pages/Home.js';
 import NoPage from './pages/NoPage.js';
+import DeckPage from './pages/DeckPage';
 
 import RequireAuth from './components/RequireAuth';
-import DeckPage from './pages/DeckPage';
+
+import './App.css';
 
 function App() {
   return (

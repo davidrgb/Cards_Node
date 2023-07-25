@@ -1,16 +1,20 @@
 .deck-div {
     align-items: start;
     background-color: #5AB0FF;
-    border: 1px solid #5AB0FF;
     color: #1A1A1A;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     font-size: 1.5rem;
     justify-content: center;
     padding: 10px;
     transition: all is ease;
     transition-duration: 0.2s;
-    width: 30vw;
+}
+
+.deck-div:hover {
+    background-color: #3e7db8;
 }
 
 .deck-description {
@@ -19,9 +23,4 @@
 
 .deck-timestamp {
     font-size: 1rem;
-}
-
-.deck-div:hover {
-    background-color: #1A1A1A;
-    color: #5AB0FF;
 }
