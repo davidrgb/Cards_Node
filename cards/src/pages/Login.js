@@ -32,7 +32,7 @@ export default function Login() {
                 <div className='card center'></div>
                 <div className='card right'></div>
             </div>          
-            <h1 className='fade first-fade'>Cards</h1>
+            <h1 className='fade first-fade' style={{animationDelay: '0.5s'}}>Cards</h1>
             <LoginForm />
         </div>
     ) : <div></div>;

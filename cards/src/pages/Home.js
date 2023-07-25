@@ -69,12 +69,12 @@ export default function Home() {
 
     return (
         <div className="home-wrapper">
-            <h1>Decks</h1>
+            <h1 className="fade first-fade">Decks</h1>
             {decks.length > 0 ?
                 <ul className="deck-list">
                     {
-                        decks.map((deck, index) => {
-                            return <div className="deck-row">
+                        decks.map((deck, index) => {                            
+                            return <div className="deck-row fade " style={{animationDelay: `${0.2 + (0.025 * (index + 1))}s`}}>
                                 <DeckView deck={deck} />
                                 <div className="button-column">
                                     <button className="square-button" onClick={() => openEditModal(index)}><EditIcon /></button>
@@ -84,11 +84,11 @@ export default function Home() {
                         })
                     }
                 </ul> :
-                <div>
+                <div className="fade first-fade">
                     <h2>Nothing to show yet</h2>
                 </div>
             }
-            <button className="circular-button" onClick={openCreateModal}><AddIcon /></button>
+            <button className="circular-button fade " style={{animationDelay: `${0.3 + (0.025 * (decks.length))}s`}} onClick={openCreateModal}><AddIcon /></button>
             {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} />}
             {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
             {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
@@ -202,18 +202,18 @@ function CreateDeckModal({ closeModal }) {
     }
 
     return createPortal(
-        <div className="deck-modal-wrapper">
-            <div className="deck-modal">
+        <div className="deck-modal-wrapper fade first-fade-fast">
+            <div className="deck-modal fade second-fade-fast">
                 <form id="create-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" onClick={handleClick}><CloseIcon /></button>
                     <div className="form-group">
-                        <input type="text" name="title" placeholder="Title" maxlength="250"></input>
-                        <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5"></textarea>
+                        <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250"></textarea>
+                        <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5"></textarea>
                     </div>
-                    <div className="form-error" style={errorStyle}>
+                    <div className="form-error fade sixth-fade-fast" style={errorStyle}>
                         {error}
                     </div>
-                    <div className="form-group">
+                    <div className="form-group fade seventh-fade-fast">
                         <button type="submit">Create</button>
                     </div>
                 </form>
@@ -336,18 +336,18 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
     const [temp, setTemp] = useState({ title: decks[index].title, description: decks[index].description });
 
     return createPortal(
-        <div className="deck-modal-wrapper">
-            <div className="deck-modal">
+        <div className="deck-modal-wrapper fade first-fade-fast">
+            <div className="deck-modal fade second-fade-fast">
                 <form id="edit-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" onClick={handleClick}><CloseIcon /></button>
                     <div className="form-group">
-                        <input type="text" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })}></input>
-                        <textarea name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })}></textarea>
+                        <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })}></textarea>
+                        <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })}></textarea>
                     </div>
-                    <div className="form-error" style={errorStyle}>
+                    <div className="form-error fade sixth-fade-fast" style={errorStyle}>
                         {error}
                     </div>
-                    <div className="form-group">
+                    <div className="form-group fade seventh-fade-fast">
                         <button type="submit">Update</button>
                     </div>
                 </form>
@@ -416,17 +416,17 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
     }
 
     return createPortal(
-        <div className="deck-modal-wrapper">
-            <div className="deck-modal">
+        <div className="deck-modal-wrapper fade first-fade-fast">
+            <div className="deck-modal fade second-fade-fast">
                 <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button" onClick={handleClick}><CloseIcon /></button>
-                    <div className="form-group">
+                    <button className="circular-button fade third-fade-fast" onClick={handleClick}><CloseIcon /></button>
+                    <div className="form-group fade fourth-fade-fast">
                         Delete {decks[index].title}?
                     </div>
-                    <div className="form-error" style={errorStyle}>
+                    <div className="form-error fade fifth-fade-fast" style={errorStyle}>
                         {error}
                     </div>
-                    <div className="form-group">
+                    <div className="form-group fade sixth-fade-fast">
                         <button type="submit">Delete</button>
                     </div>
                 </form>

@@ -28,22 +28,29 @@ export default function LoginForm() {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
+    const [signUpButtonStyle, setSignUpButtonStyle] = useState({ animationDelay: '0.8s' });
+    const [logInButtonStyle, setLogInButtonStyle] = useState({ animationDelay: '0.9s' });
+
     let signUpButtonClassNames = 'fade fourth-fade form-button';
     let logInButtonClassNames = 'fade fifth-fade form-button';
 
     function displayErrorMessage() {
         if (error !== '') {
             setErrorStyle({
+                animationDelay: '0.8s',
                 display: 'block',
             });
             signUpButtonClassNames = 'fade fifth-fade form-button';
+            setSignUpButtonStyle({animationDelay: '0.9s'})
             logInButtonClassNames = 'fade sixth-fade form-button';
+            setLogInButtonStyle({ animationDelay: '1s' });
         }
     }
 
     function hideErrorMessage() {
         if (error === '') {
             setErrorStyle({
+                animationDelay: '0.8s',
                 display: 'none',
             });
         }
@@ -141,15 +148,15 @@ export default function LoginForm() {
     return (
         <form className="form" id="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
-                <input className='fade second-fade form-input' type="text" name="username" placeholder="Username"></input>
-                <input className='fade third-fade form-input' type="password" name="password" placeholder="Password"></input>
+                <input className='fade second-fade form-input' style={{ animationDelay: '0.6s' }} type="text" name="username" placeholder="Username"></input>
+                <input className='fade third-fade form-input' style={{ animationDelay: '0.7s' }} type="password" name="password" placeholder="Password"></input>
             </div>
             <div className="fade fourth-fade form-error" style={errorStyle}>
                 {error}
             </div>
             <div className="form-group">
-                <button className={signUpButtonClassNames} type="submit" onClick={handleSignUpClick}>Sign Up</button>
-                <button className={logInButtonClassNames} type="submit" onClick={handleLogInClick}>Login</button>
+                <button className={signUpButtonClassNames} style={signUpButtonStyle} type="submit" onClick={handleSignUpClick}>Sign Up</button>
+                <button className={logInButtonClassNames} style={logInButtonStyle} type="submit" onClick={handleLogInClick}>Login</button>
             </div>
         </form>
     );

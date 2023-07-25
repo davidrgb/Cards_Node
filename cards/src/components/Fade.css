@@ -12,25 +12,83 @@
 }
 
 .first-fade {
-    animation-delay: 0.5s;
+    animation-delay: 0.1s;
 }
 
 .second-fade {
-    animation-delay: 0.6s;
+    animation-delay: 0.2s;
 }
 
 .third-fade {
-    animation-delay: 0.7s;
+    animation-delay: 0.3s;
 }
 
 .fourth-fade {
-    animation-delay: 0.8s;
+    animation-delay: 0.4s;
 }
 
 .fifth-fade {
-    animation-delay: 0.9s;
+    animation-delay: 0.5s;
 }
 
 .sixth-fade {
+    animation-delay: 0.6s;
+}
+
+.seventh-fade {
+    animation-delay: 0.7s;
+}
+
+.eighth-fade {
+    animation-delay: 0.8s;
+}
+
+.ninth-fade {
+    animation-delay: 0.9s;
+}
+
+.tenth-fade {
     animation-delay: 1.0s;
+}
+
+
+
+.first-fade-fast {
+    animation-delay: 0.025s;
+}
+
+.second-fade-fast {
+    animation-delay: 0.05s;
+}
+
+.third-fade-fast {
+    animation-delay: 0.075s;
+}
+
+.fourth-fade-fast {
+    animation-delay: 0.1s;
+}
+
+.fifth-fade-fast {
+    animation-delay: 0.125s;
+}
+
+.sixth-fade-fast {
+    animation-delay: 0.15s;
+}
+
+.seventh-fade-fast {
+    animation-delay: 0.175s;
+}
+
+.eighth-fade-fast {
+    animation-delay: 0.2s;
+}
+
+.ninth-fade-fast {
+    animation-delay: 0.225s;
+}
+
+.tenth-fade-fast {
+    animation-delay: 0.25s;
 }
