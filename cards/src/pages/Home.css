@@ -18,6 +18,8 @@
     padding: 0;
     padding-bottom: 3rem;
     padding-top: 1.5rem;
+    transition: all is ease;
+    transition-duration: 0.2s;
     width: 80vw;
 }
 
