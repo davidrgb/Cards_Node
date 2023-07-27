@@ -17,9 +17,12 @@ export default function DeckView({ deck, openEditModal, openDeleteModal }) {
     return (
         <div className="deck-div" onClick={openDeck}>
             <div className="deck-info">
-                <div>{deck.title}</div>
+                <div className="deck-title">{deck.title}</div>
                 {deck.description && <div className="deck-description">{deck.description}</div>}
-                <div className="deck-timestamp">{new Date(deck.ts).toLocaleString()}</div>
+                <div className="deck-footer">
+                    <div className="deck-timestamp">{new Date(deck.ts).toLocaleString()}</div>
+                    <div className="deck-creator">{`Created by ${deck.owner}`}</div>
+                </div>
             </div>
             <div className="button-column">
                 <button className="square-button" style={{borderRadius: "10px 10px 0 0"}} onClick={(event) => { event.stopPropagation(); openEditModal() }}><EditIcon /></button>
