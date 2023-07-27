@@ -18,9 +18,11 @@ app.use(cookieParser());
 
 const MySQLStore = require('express-mysql-session')(session);
 
-const dev = true;
+const package = require('./package.json');
 
-const port = dev ? 3011 : 3010;
+const production = package.production;
+
+const port = production ? 3010 : 3011;
 
 const sessionCookie = require('./session-cookie.json');
 
