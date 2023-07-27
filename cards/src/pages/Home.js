@@ -18,20 +18,28 @@ import '../components/Form.css';
 import './Home.css';
 
 export default function Home() {
-    const target = '/';
-
+    const [username, setUsername] = useState(null);
     const [decks, setDecks] = useState([]);
 
+    let deckInterval;
+
     useEffect(() => {
+        const getUsername = async () => await fetch('/api/user')
+            .then(response => response.json())
+            .then(data => setUsername(data.username));
+        getUsername();
+
         const getDecks = async () => await fetch(`/api/decks`)
             .then(response => response.json())
             .then(data => {
+                setDecks([]);
                 data.forEach(deck => {
                     let d = new Deck(deck);
                     setDecks(decks => [...decks, d].sort((a, b) => { return Date.parse(b.ts) - Date.parse(a.ts) }));
                 });
             })
         getDecks();
+        deckInterval = setInterval(() => getDecks(), 5000);
     }, []);
 
     const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -72,18 +80,18 @@ export default function Home() {
             {decks.length > 0 ?
                 <ul className="deck-list">
                     {
-                        decks.map((deck, index) => {                            
-                            return <div className="deck-row fade" style={{animationDelay: `${0.2 + (0.025 * (index + 1))}s`}}>
-                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)}/>
+                        decks.map((deck, index) => {
+                            return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s` }}>
+                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} />
                             </div>
                         })
                     }
                 </ul> :
-                <div className="fade first-fade">
+                <div className="deck-list fade first-fade">
                     <h2>Nothing to show yet</h2>
                 </div>
             }
-            <button className="circular-button fade " style={{animationDelay: `${0.3 + (0.025 * (decks.length))}s`}} onClick={openCreateModal}><AddIcon /></button>
+            <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
             {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} />}
             {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
             {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}

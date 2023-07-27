@@ -38,6 +38,7 @@
 
 .deck-title {
     order: -2;
+    text-align: start;
 }
 
 .deck-description {

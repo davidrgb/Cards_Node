@@ -145,7 +145,12 @@ app.post('/api/delete/deck/:deckId', function (req, res) {
     }
     else return res.json({ error: 'Failed to delete deck: authentication failure' });
   });
-})
+});
+
+app.get('/api/user', function (req, res) {
+  if (req.session.passport === undefined) return res.json({ error: 'Failed to read deck: authentication failure' });
+  return res.json({ username: req.session.passport.user.username });
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../cards', 'build', 'index.html'));
