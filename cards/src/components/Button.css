@@ -49,3 +49,10 @@ button:disabled {
     width: 3rem;
 }
 
+.warning-button {
+    background-color: #FF5A5A;
+}
+
+.warning-button:hover {
+    background-color: #B83E3E;
+}

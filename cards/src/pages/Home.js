@@ -422,7 +422,7 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
                         {error}
                     </div>
                     <div className="form-group fade sixth-fade-fast">
-                        <button type="submit">Delete</button>
+                        <button className="warning-button" type="submit">Delete</button>
                     </div>
                 </form>
             </div>
