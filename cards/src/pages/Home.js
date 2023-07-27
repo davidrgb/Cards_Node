@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+
 
 import { Deck } from '../data/Deck.js';
 
@@ -74,12 +73,8 @@ export default function Home() {
                 <ul className="deck-list">
                     {
                         decks.map((deck, index) => {                            
-                            return <div className="deck-row fade " style={{animationDelay: `${0.2 + (0.025 * (index + 1))}s`}}>
-                                <DeckView deck={deck} />
-                                <div className="button-column">
-                                    <button className="square-button" onClick={() => openEditModal(index)}><EditIcon /></button>
-                                    <button className="square-button" onClick={() => openDeleteModal(index)}><DeleteIcon /></button>
-                                </div>
+                            return <div className="deck-row fade" style={{animationDelay: `${0.2 + (0.025 * (index + 1))}s`}}>
+                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)}/>
                             </div>
                         })
                     }
@@ -205,7 +200,7 @@ function CreateDeckModal({ closeModal }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="create-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick}><CloseIcon /></button>
                     <div className="form-group">
                         <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250"></textarea>
                         <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5"></textarea>
@@ -339,7 +334,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="edit-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick}><CloseIcon /></button>
                     <div className="form-group">
                         <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })}></textarea>
                         <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })}></textarea>
@@ -419,7 +414,7 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick}><CloseIcon /></button>
                     <div className="form-group fade fourth-fade-fast">
                         Delete {decks[index].title}?
                     </div>

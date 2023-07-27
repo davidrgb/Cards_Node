@@ -1,26 +1,45 @@
 .deck-div {
-    align-items: start;
-    background-color: #5AB0FF;
-    color: #1A1A1A;
+    align-items: center;
+    background-color: #2A2A2A;
+    border-radius: 10px;
+    color: white;
     cursor: pointer;
     display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+    flex-direction: row;
     font-size: 1.5rem;
-    justify-content: center;
+    gap: 1rem;
+    justify-content: space-between;
     padding: 10px;
     transition: all is ease;
     transition-duration: 0.2s;
+    width: 100%;
 }
 
 .deck-div:hover {
-    background-color: #3e7db8;
+    background-color: #3A3A3A;
+}
+
+.deck-info {
+    align-items: start;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 0.5rem;
+    justify-content: space-between;
 }
 
 .deck-description {
     font-size: 1rem;
+    text-align: start;
 }
 
 .deck-timestamp {
     font-size: 1rem;
+}
+
+.button-column {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }

@@ -11,6 +11,10 @@ button:hover {
     background-color: #3e7db8;
 }
 
+button:disabled {
+    background-color: #6A6A6A;
+}
+
 .circular-button {
     align-items: center;
     border-radius: 50%;
