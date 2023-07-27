@@ -161,7 +161,7 @@ function CreateDeckModal({ closeModal }) {
             if (description.length > 1000) setError('Description must be no more than 1000 characters');
             else {
                 const invalidCharacter = findInvalidCharacter(descriptionExpression, description);
-                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in password`);
+                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in description`);
             }
             displayErrorMessage();
             return false;
@@ -286,7 +286,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
             if (description.length > 1000) setError('Description must be no more than 1000 characters');
             else {
                 const invalidCharacter = findInvalidCharacter(descriptionExpression, description);
-                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in password`);
+                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in description`);
             }
             displayErrorMessage();
             return false;
