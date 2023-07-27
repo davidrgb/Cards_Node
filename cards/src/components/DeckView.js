@@ -7,10 +7,11 @@ import './Button.css';
 
 import './DeckView.css';
 
-export default function DeckView({ deck, openEditModal, openDeleteModal, username }) {
+export default function DeckView({ deck, openEditModal, openDeleteModal, username, deckInterval }) {
     const navigate = useNavigate();
 
     function openDeck() {
+        clearInterval(deckInterval);
         return navigate(`/deck/${deck.id}`);
     }
 

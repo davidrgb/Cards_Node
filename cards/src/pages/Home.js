@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 
-
 import { Deck } from '../data/Deck.js';
 
 import DeckView from '../components/DeckView';
@@ -20,8 +19,7 @@ import './Home.css';
 export default function Home() {
     const [username, setUsername] = useState(null);
     const [decks, setDecks] = useState([]);
-
-    let deckInterval;
+    const [deckInterval, setDeckInterval] = useState();
 
     useEffect(() => {
         const getUsername = async () => await fetch('/api/user')
@@ -39,7 +37,7 @@ export default function Home() {
                 });
             })
         getDecks();
-        deckInterval = setInterval(() => getDecks(), 5000);
+        setDeckInterval(setInterval(() => getDecks(), 5000));
     }, []);
 
     const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -82,7 +80,7 @@ export default function Home() {
                     {
                         decks.map((deck, index) => {
                             return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s` }}>
-                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} />
+                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} deckInterval={deckInterval} />
                             </div>
                         })
                     }
@@ -92,14 +90,14 @@ export default function Home() {
                 </div>
             }
             <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
-            {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} />}
+            {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} />}
             {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
             {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
         </div>
     );
 }
 
-function CreateDeckModal({ closeModal }) {
+function CreateDeckModal({ closeModal, deckInterval }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
@@ -200,7 +198,10 @@ function CreateDeckModal({ closeModal }) {
                     setError(`${data.error}`);
                     displayErrorMessage();
                 }
-                else return navigate(`/deck/${data.id}`);
+                else {
+                    clearInterval(deckInterval);
+                    return navigate(`/deck/${data.id}`);
+                }
             });
     }
 
