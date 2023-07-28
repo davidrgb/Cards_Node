@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { createPortal } from "react-dom";
 
@@ -57,6 +57,9 @@ export default function Home() {
             case Sort.Title.value:
                 setSortBy(Sort.Timestamp);
                 break;
+            default:
+                setSortBy(Sort.Title);
+                break;
         }
     }
 
@@ -68,31 +71,37 @@ export default function Home() {
             case Order.Ascending.value:
                 setOrderBy(Order.Descending);
                 break;
+            default:
+                setOrderBy(Order.Ascending);
+                break;
         }
     }
 
     useEffect(() => {
-        sortDecks();
-    }, [sortBy, orderBy, decks]);
-
-    const sortByTimestamp = () => {
-        setDecks(decks => [...decks].sort((a, b) => { return orderBy.value === 'Descending' ? Date.parse(b.ts) - Date.parse(a.ts) : Date.parse(a.ts) - Date.parse(b.ts) }));
-    }
-
-    const sortByTitle = () => {
-        setDecks(decks => [...decks].sort((a, b) => orderBy.value === 'Descending' ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title)));
-    }
-
-    const sortDecks = () => {
-        switch (sortBy.value) {
-            case Sort.Timestamp.value:
-                sortByTimestamp();
-                break;
-            case Sort.Title.value:
-                sortByTitle();
-                break;
+        const sortByTimestamp = () => {
+            setDecks(decks => [...decks].sort((a, b) => { return orderBy.value === 'Descending' ? Date.parse(b.ts) - Date.parse(a.ts) : Date.parse(a.ts) - Date.parse(b.ts) }));
         }
-    }
+    
+        const sortByTitle = () => {
+            setDecks(decks => [...decks].sort((a, b) => orderBy.value === 'Descending' ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title)));
+        }
+    
+        const sortDecks = () => {
+            switch (sortBy.value) {
+                case Sort.Timestamp.value:
+                    sortByTimestamp();
+                    break;
+                case Sort.Title.value:
+                    sortByTitle();
+                    break;
+                default:
+                    sortByTimestamp();
+                    break;
+            }
+        }
+
+        sortDecks();
+    }, [sortBy, orderBy, decks, Sort.Timestamp.value, Sort.Title.value]);
 
     const getDecks = () => fetch(`/api/decks`)
         .then(response => response.json())
@@ -106,15 +115,17 @@ export default function Home() {
 
     useEffect(() => {
         const getUsername = () => fetch('/api/user')
-            .then(response => response.json())
-            .then(data => setUsername(data.username));
+        .then(response => response.json())
+        .then(data => setUsername(data.username));
         getUsername();
 
         getDecks();
         setDeckInterval(setInterval(() => getDecks(), 5000));
+    }, [setDeckInterval]);
 
+    useEffect(() => {
         return () => clearInterval(deckInterval);
-    }, []);
+    }, [deckInterval]);
 
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
