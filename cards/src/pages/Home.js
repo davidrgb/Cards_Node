@@ -163,7 +163,7 @@ export default function Home() {
                     {
                         decks.map((deck, index) => {
                             return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s`, display: searchKey !== null && searchKey.length > 0 ? deck.title.toUpperCase().includes(searchKey.toUpperCase()) ? 'flex' : 'none' : 'flex' }}>
-                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} />
+                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} deckInterval={deckInterval} />
                             </div>
                         })
                     }
@@ -173,14 +173,14 @@ export default function Home() {
                 </div>
             }
             <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
-            {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} />}
+            {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} />}
             {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
             {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
         </div>
     );
 }
 
-function CreateDeckModal({ closeModal }) {
+function CreateDeckModal({ closeModal, deckInterval }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
@@ -282,6 +282,7 @@ function CreateDeckModal({ closeModal }) {
                     displayErrorMessage();
                 }
                 else {
+                    clearInterval(deckInterval);
                     return navigate(`/deck/${data.id}`);
                 }
             });
