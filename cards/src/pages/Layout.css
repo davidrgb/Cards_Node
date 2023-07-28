@@ -19,5 +19,13 @@ nav {
 
 .nav-row li {
     display: inline;
-    padding: 0.5rem;
+    padding: 0.75rem;
+}
+
+.nav-row button {
+    display: flex;
+    font-size: 2rem;
+    height: 2.5rem;
+    padding: 0;
+    width: 2.5rem;
 }
