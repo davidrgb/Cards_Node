@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { createPortal } from "react-dom";
 
 import { useNavigate } from 'react-router-dom';
 
+import AbcIcon from '@mui/icons-material/Abc';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AddIcon from '@mui/icons-material/Add';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { Deck } from '../data/Deck.js';
@@ -17,27 +21,99 @@ import '../components/Form.css';
 import './Home.css';
 
 export default function Home() {
+    const Sort = {
+        Timestamp: {
+            icon: <AccessTimeIcon />,
+            value: 'Timestamp',
+        },
+        Title: {
+            icon: <AbcIcon />,
+            value: 'Title',
+        },
+    };
+
+    const Order = {
+        Descending: {
+            icon: <ArrowDownwardIcon />,
+            value: 'Descending',
+        },
+        Ascending: {
+            icon: <ArrowUpwardIcon />,
+            value: 'Ascending',
+        },
+    }
+
     const [username, setUsername] = useState(null);
     const [decks, setDecks] = useState([]);
+    const [sortBy, setSortBy] = useState(Sort.Timestamp);
+    const [orderBy, setOrderBy] = useState(Order.Descending);
     const [deckInterval, setDeckInterval] = useState();
 
+    const toggleSortBy = () => {
+        switch (sortBy.value) {
+            case Sort.Timestamp.value:
+                setSortBy(Sort.Title);
+                break;
+            case Sort.Title.value:
+                setSortBy(Sort.Timestamp);
+                break;
+        }
+    }
+
+    const toggleOrderBy = () => {
+        switch (orderBy.value) {
+            case Order.Descending.value:
+                setOrderBy(Order.Ascending);
+                break;
+            case Order.Ascending.value:
+                setOrderBy(Order.Descending);
+                break;
+        }
+    }
+
     useEffect(() => {
-        const getUsername = async () => await fetch('/api/user')
+        sortDecks();
+    }, [sortBy, orderBy, decks]);
+
+    const sortByTimestamp = () => {
+        setDecks(decks => [...decks].sort((a, b) => { return orderBy.value === 'Descending' ? Date.parse(b.ts) - Date.parse(a.ts) : Date.parse(a.ts) - Date.parse(b.ts) }));
+    }
+
+    const sortByTitle = () => {
+        setDecks(decks => [...decks].sort((a, b) => orderBy.value === 'Descending' ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title)));
+    }
+
+    const sortDecks = () => {
+        switch (sortBy.value) {
+            case Sort.Timestamp.value:
+                sortByTimestamp();
+                break;
+            case Sort.Title.value:
+                sortByTitle();
+                break;
+        }
+    }
+
+    const getDecks = () => fetch(`/api/decks`)
+        .then(response => response.json())
+        .then(data => {
+            setDecks([]);
+            data.forEach(deck => {
+                let d = new Deck(deck);
+                setDecks(decks => [...decks, d].sort((a, b) => { return Date.parse(b.ts) - Date.parse(a.ts) }));
+            });
+        });
+
+    useEffect(() => {
+        const getUsername = () => fetch('/api/user')
             .then(response => response.json())
             .then(data => setUsername(data.username));
         getUsername();
 
-        const getDecks = async () => await fetch(`/api/decks`)
-            .then(response => response.json())
-            .then(data => {
-                setDecks([]);
-                data.forEach(deck => {
-                    let d = new Deck(deck);
-                    setDecks(decks => [...decks, d].sort((a, b) => { return Date.parse(b.ts) - Date.parse(a.ts) }));
-                });
-            })
         getDecks();
         setDeckInterval(setInterval(() => getDecks(), 5000));
+
+        return () => clearInterval(deckInterval);
     }, []);
 
     const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -72,15 +148,22 @@ export default function Home() {
         setDeleteModalOpen(false);
     }
 
+    const [searchKey, setSearchKey] = useState('');
+
     return (
         <div className="home-wrapper">
             <h1 className="fade first-fade">Decks</h1>
+            <div className="control-row fade second-fade">
+                <input className="search" name="search" placeholder="Search" maxlength="250" onChange={(e) => setSearchKey(e.target.value)}></input>
+                <button className="rounded-square-button" onClick={toggleSortBy}>{sortBy.icon}</button>
+                <button className="rounded-square-button" onClick={toggleOrderBy}>{orderBy.icon}</button>
+            </div>
             {decks.length > 0 ?
                 <ul className="deck-list">
                     {
                         decks.map((deck, index) => {
-                            return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s` }}>
-                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} deckInterval={deckInterval} />
+                            return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s`, display: searchKey !== null && searchKey.length > 0 ? deck.title.toUpperCase().includes(searchKey.toUpperCase()) ? 'flex' : 'none' : 'flex' }}>
+                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} />
                             </div>
                         })
                     }
@@ -90,14 +173,14 @@ export default function Home() {
                 </div>
             }
             <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
-            {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} />}
+            {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} />}
             {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
             {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
         </div>
     );
 }
 
-function CreateDeckModal({ closeModal, deckInterval }) {
+function CreateDeckModal({ closeModal }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
@@ -199,7 +282,6 @@ function CreateDeckModal({ closeModal, deckInterval }) {
                     displayErrorMessage();
                 }
                 else {
-                    clearInterval(deckInterval);
                     return navigate(`/deck/${data.id}`);
                 }
             });

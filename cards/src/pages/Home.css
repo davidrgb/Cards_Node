@@ -8,6 +8,42 @@
     width: 100%;
 }
 
+.control-row {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    justify-content: space-between;
+    padding-top: 1.5rem;
+    transition: all is ease;
+    transition-duration: 0.2s;
+    width: 80vw;
+}
+
+.search {
+    background-color: #1A1A1A;
+    border: none;
+    border-bottom: 0.5px solid #5AB0FF;
+    border-radius: 0;
+    color: white;
+    flex-grow: 1;
+    font-size: 1.5rem;
+    min-width: 3rem;
+    outline: none;
+    padding: 5px;
+    text-align: center;
+    transition: all is ease;
+    transition-duration: 0.2s;
+}
+
+.search::placeholder {
+    color: lightgrey;
+}
+
+.search:focus {
+    border-bottom: 3px solid #5AB0FF;
+}
+
 .deck-list {
     align-items: center;
     display: flex;
@@ -24,18 +60,27 @@
 }
 
 @media screen and (min-width: 640px) {
+    .control-row {
+        width: 60vw;
+    }
     .deck-list {
         width: 60vw;
     }
 }
 
 @media screen and (min-width: 1000px) {
+    .control-row {
+        width: 40vw;
+    }
     .deck-list {
         width: 40vw;
     }
 }
 
 @media screen and (min-width: 1280px) {
+    .control-row {
+        width: 30vw;
+    }
     .deck-list {
         width: 30vw;
     }
