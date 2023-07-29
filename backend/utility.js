@@ -1,4 +1,4 @@
-export const Status = {
+exports.Status = {
     OK: 200,
     Created: 201,
     BadRequest: 400,
@@ -18,12 +18,12 @@ const usernameExpression = /^[a-zA-Z._0-9-]{1,16}$/;
 const passwordExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>.?/-]{8,32}$/;
 const passwordCharacterExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>.?/-]$/;
 
-export function validateUsername(username) {
+exports.validateUsername = function validateUsername(username) {
     if (username === undefined || username === null || username.length === 0) return false;
     return usernameExpression.test(username);
 }
 
-export function usernameError(username) {
+exports.usernameError = function usernameError(username) {
     if (username.length < 1) return 'Username required'
     else if (username.length > 16) return 'Username must be no more than 16 characters';
     else {
@@ -32,12 +32,12 @@ export function usernameError(username) {
     }
 }
 
-export function validatePassword(password) {
+exports.validatePassword = function validatePassword(password) {
     if (password === undefined || password === null || password.length === 0) return false;
     return passwordExpression.test(password);
 }
 
-export function passwordError(password) {
+exports.passwordError = function passwordError(password) {
     if (password.length < 8) return 'Password must be at least 8 characters';
     else if (password.length > 32) return 'Password must be no more than 32 characters';
     else {
@@ -49,12 +49,12 @@ export function passwordError(password) {
 const titleExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>. ?/-]{1,250}$/;
 const descriptionExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>. ?/-]{0,1000}$/;
 
-export function validateTitle(title) {
+exports.validateTitle = function validateTitle(title) {
     if (title === undefined || title === null || title.length === 0) return false;
     return titleExpression.test(title);
 }
 
-export function titleError(title) {
+exports.titleError = function titleError(title) {
     if (title.length < 1) return 'Title required';
     else if (title.length > 250) return 'Title must be no more than 250 characters';
     else {
@@ -63,12 +63,12 @@ export function titleError(title) {
     }
 }
 
-export function validateDescription(description) {
+exports.validateDescription = function validateDescription(description) {
     if (description === undefined || description === null || description.length === 0) return true;
     return descriptionExpression.test(description);
 }
 
-export function descriptionError(description) {
+exports.descriptionError = function descriptionError(description) {
     if (description.length > 1000) return 'Description must be no more than 1000 characters';
     else {
         const invalidCharacter = findInvalidCharacter(descriptionExpression, description);
