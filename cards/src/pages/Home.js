@@ -170,11 +170,14 @@ export default function Home() {
     return (
         <div className="home-wrapper">
             <h1 className="fade first-fade">Decks</h1>
-            <div className="control-row fade second-fade">
-                <input className="search" name="search" placeholder="Search" maxlength="250" onChange={(e) => setSearchKey(e.target.value)}></input>
-                <button className="rounded-square-button" onClick={toggleSortBy}>{sortBy.icon}</button>
-                <button className="rounded-square-button" onClick={toggleOrderBy}>{orderBy.icon}</button>
-            </div>
+            {decks.length > 0 ?
+                <div className="control-row fade second-fade">
+                    <input className="search" name="search" placeholder="Search" maxlength="250" onChange={(e) => setSearchKey(e.target.value)}></input>
+                    <button className="rounded-square-button" onClick={toggleSortBy}>{sortBy.icon}</button>
+                    <button className="rounded-square-button" onClick={toggleOrderBy}>{orderBy.icon}</button>
+                </div> :
+                <></>
+            }
             {decks.length > 0 ?
                 <ul className="deck-list">
                     {
