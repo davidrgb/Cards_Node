@@ -58,7 +58,7 @@ router.post('/signup', function (req, res, next) {
                 };
                 req.login(user, function (err) {
                     if (err) { return next(err); }
-                    return res.status(utility.Status.Created);
+                    return res.status(utility.Status.Created).json({});
                 });
             });
         });
@@ -79,7 +79,7 @@ router.post('/login/password', function (req, res, next) {
         if (!user) return res.status(utility.Status.BadRequest).json({ error: 'Incorrect username or password' });
         req.login(user, function (err) {
             if (err) { return next(err); }
-            return res.status(utility.Status.OK);
+            return res.status(utility.Status.OK).json({});
         });
     })(req, res, next);
 }
@@ -90,7 +90,7 @@ router.get('/session', function (req, res) {
     else {
         let username = req.session.passport.user.username;
         if (username === undefined || username === null) return res.status(utility.Status.Unauthorized).redirect('/login');
-        else res.status(utility.Status.OK);
+        else res.status(utility.Status.OK).json({});
     }
 });
 

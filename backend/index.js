@@ -62,7 +62,7 @@ app.post('/api/create/deck', (req, res) => {
       req.body.description,
     ], function (err) {
       if (err) return;
-      return res.status(utility.Status.Created).json({ username: username, id: id });
+      return res.status(utility.Status.Created).json({ id: id });
     })
   });
 });
@@ -133,7 +133,7 @@ app.post('/api/update/deck/:deckId', function (req, res) {
         [req.body.title, req.body.description, req.params.deckId],
         function (err) {
           if (err) return res.status(utility.Status.InternalServerError).json({ error: err });
-          return res.status(utility.Status.OK);
+          return res.status(utility.Status.OK).json({});
         });
     }
     else return res.status(utility.Status.Forbidden).json({ error: 'Failed to update deck: authentication failure' });
@@ -147,7 +147,7 @@ app.post('/api/delete/deck/:deckId', function (req, res) {
     if (deck['owner'] === req.session.passport.user.username) {
       connection.query('DELETE FROM decks WHERE id = ?', [req.params.deckId], function (err) {
         if (err) return res.status(utility.Status.InternalServerError).json({ error: err });
-        else return res.status(utility.Status.OK);
+        else return res.status(utility.Status.OK).json({});
       })
     }
     else return res.status(utility.Status.BadRequest).json({ error: 'Failed to delete deck: authentication failure' });
