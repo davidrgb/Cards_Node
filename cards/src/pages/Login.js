@@ -27,10 +27,10 @@ export default function Login() {
 
     return authenticated === false ? (
         <div className='login'>
-            <div className='stack'>
-                <div className='card left'></div>
-                <div className='card center'></div>
-                <div className='card right'></div>
+            <div className='login-stack'>
+                <div className='login-card login-left'></div>
+                <div className='login-card login-center'></div>
+                <div className='login-card login-right'></div>
             </div>          
             <h1 className='fade first-fade' style={{animationDelay: '0.5s'}}>Cards</h1>
             <LoginForm />
