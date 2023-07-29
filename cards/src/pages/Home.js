@@ -20,6 +20,7 @@ import {
 } from '../data/Utility.js';
 
 import DeckView from '../components/DeckView';
+import Loading from '../components/Loading';
 
 import '../components/Button.css';
 import '../components/Form.css';
@@ -54,6 +55,7 @@ export default function Home() {
     const [sortBy, setSortBy] = useState(Sort.Timestamp);
     const [orderBy, setOrderBy] = useState(Order.Descending);
     const [deckInterval, setDeckInterval] = useState();
+    const [loading, setLoading] = useState(true);
 
     const toggleSortBy = () => {
         switch (sortBy.value) {
@@ -109,23 +111,30 @@ export default function Home() {
         sortDecks();
     }, [sortBy, orderBy, decks, Sort.Timestamp.value, Sort.Title.value]);
 
-    const getDecks = () => fetch(`/api/decks`)
-        .then(response => response.json())
-        .then(data => {
-            setDecks([]);
-            data.forEach(deck => {
-                let d = new Deck(deck);
-                setDecks(decks => [...decks, d].sort((a, b) => { return Date.parse(b.ts) - Date.parse(a.ts) }));
+    const getDecks = async () => {
+        await fetch(`/api/decks`)
+            .then(response => response.json())
+            .then(data => {
+                setDecks([]);
+                data.forEach(deck => {
+                    let d = new Deck(deck);
+                    setDecks(decks => [...decks, d].sort((a, b) => { return Date.parse(b.ts) - Date.parse(a.ts) }));
+                });
             });
-        });
+    }
 
     useEffect(() => {
-        const getUsername = () => fetch('/api/user')
+        const getUsername = async () => await fetch('/api/user')
             .then(response => response.json())
             .then(data => setUsername(data.username));
         getUsername();
 
-        getDecks();
+        const firstRun = async () => {
+            await getDecks()
+            setLoading(false);
+        }
+        firstRun();
+
         setDeckInterval(setInterval(() => getDecks(), 5000));
     }, [setDeckInterval]);
 
@@ -168,35 +177,38 @@ export default function Home() {
     const [searchKey, setSearchKey] = useState('');
 
     return (
-        <div className="home-wrapper">
-            {decks.length > 0 ?
-                <div className="control-row fade second-fade">
-                    <input className="search" name="search" placeholder="Search" maxlength="250" onChange={(e) => setSearchKey(e.target.value)}></input>
-                    <button className="rounded-square-button" onClick={toggleSortBy}>{sortBy.icon}</button>
-                    <button className="rounded-square-button" onClick={toggleOrderBy}>{orderBy.icon}</button>
-                </div> :
-                <></>
-            }
-            {decks.length > 0 ?
-                <ul className="deck-list">
-                    {
-                        decks.map((deck, index) => {
-                            return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s`, display: searchKey !== null && searchKey.length > 0 ? deck.title.toUpperCase().includes(searchKey.toUpperCase()) ? 'flex' : 'none' : 'flex' }}>
-                                <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} deckInterval={deckInterval} />
-                            </div>
-                        })
-                    }
-                </ul> :
-                <div className="deck-list fade first-fade">
-                    <h2 style={{ margin: '0' }}>Nothing to show yet</h2>
-                    <h3 style={{ color: 'white', margin: '0' }}>Start by creating your first deck</h3>
-                </div>
-            }
-            <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
-            {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} />}
-            {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
-            {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
-        </div>
+        loading ?
+            <Loading /> :
+            <div className="home-wrapper">
+                {
+                    decks.length > 0 ?
+                        <div className="control-row fade first-fade">
+                            <input className="search" name="search" placeholder="Search" maxlength="250" onChange={(e) => setSearchKey(e.target.value)}></input>
+                            <button className="rounded-square-button" onClick={toggleSortBy}>{sortBy.icon}</button>
+                            <button className="rounded-square-button" onClick={toggleOrderBy}>{orderBy.icon}</button>
+                        </div> :
+                        <></>
+                }
+                {decks.length > 0 ?
+                    <ul className="deck-list">
+                        {
+                            decks.map((deck, index) => {
+                                return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s`, display: searchKey !== null && searchKey.length > 0 ? deck.title.toUpperCase().includes(searchKey.toUpperCase()) ? 'flex' : 'none' : 'flex' }}>
+                                    <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} deckInterval={deckInterval} />
+                                </div>
+                            })
+                        }
+                    </ul> :
+                    <div className="deck-list">
+                        <h2 className="fade first-fade" style={{ margin: '0' }}>Nothing to show yet</h2>
+                        <h3 className="fade second-fade" style={{ color: 'white', margin: '0' }}>Start by creating your first deck</h3>
+                    </div>
+                }
+                <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
+                {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} />}
+                {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
+                {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
+            </div>
     );
 }
 
