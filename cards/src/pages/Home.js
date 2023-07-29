@@ -169,7 +169,6 @@ export default function Home() {
 
     return (
         <div className="home-wrapper">
-            <h1 className="fade first-fade">Decks</h1>
             {decks.length > 0 ?
                 <div className="control-row fade second-fade">
                     <input className="search" name="search" placeholder="Search" maxlength="250" onChange={(e) => setSearchKey(e.target.value)}></input>
@@ -189,7 +188,8 @@ export default function Home() {
                     }
                 </ul> :
                 <div className="deck-list fade first-fade">
-                    <h2>Nothing to show yet</h2>
+                    <h2 style={{ margin: '0' }}>Nothing to show yet</h2>
+                    <h3 style={{ color: 'white', margin: '0' }}>Start by creating your first deck</h3>
                 </div>
             }
             <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
