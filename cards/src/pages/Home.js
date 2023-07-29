@@ -13,6 +13,12 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { Deck } from '../data/Deck.js';
 
+import {
+    validateTitle, titleError,
+    validateDescription, descriptionError,
+    Status,
+} from '../data/Utility.js';
+
 import DeckView from '../components/DeckView';
 
 import '../components/Button.css';
@@ -81,11 +87,11 @@ export default function Home() {
         const sortByTimestamp = () => {
             setDecks(decks => [...decks].sort((a, b) => { return orderBy.value === 'Descending' ? Date.parse(b.ts) - Date.parse(a.ts) : Date.parse(a.ts) - Date.parse(b.ts) }));
         }
-    
+
         const sortByTitle = () => {
             setDecks(decks => [...decks].sort((a, b) => orderBy.value === 'Descending' ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title)));
         }
-    
+
         const sortDecks = () => {
             switch (sortBy.value) {
                 case Sort.Timestamp.value:
@@ -115,8 +121,8 @@ export default function Home() {
 
     useEffect(() => {
         const getUsername = () => fetch('/api/user')
-        .then(response => response.json())
-        .then(data => setUsername(data.username));
+            .then(response => response.json())
+            .then(data => setUsername(data.username));
         getUsername();
 
         getDecks();
@@ -222,47 +228,19 @@ function CreateDeckModal({ closeModal, deckInterval }) {
         }
     }
 
-    const titleExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>. ?/-]{1,250}$/;
-    const descriptionExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>. ?/-]{0,1000}$/;
-
-    function validateTitle(title) {
-        if (title === undefined || title === null || title.length === 0) return false;
-        return titleExpression.test(title);
-    }
-
-    function validateDescription(description) {
-        if (description === undefined || description === null || description.length === 0) return true;
-        return descriptionExpression.test(description);
-    }
-
-    function findInvalidCharacter(re, string) {
-        for (let i = 0; i < string.length; i++) {
-            if (!re.test(string[i])) return { index: i + 1, character: string[i] };
-        }
-    }
-
     const navigate = useNavigate();
 
     function errorHandling(title, description) {
         const validTitle = validateTitle(title);
         if (!validTitle) {
-            if (title.length < 1) setError('Title required');
-            else if (title.length > 250) setError('Title must be no more than 250 characters');
-            else {
-                const invalidCharacter = findInvalidCharacter(titleExpression, title);
-                setError(`Invalid character '${invalidCharacter.character} at position ${invalidCharacter.index} in title`);
-            }
+            setError(titleError(title));
             displayErrorMessage();
             return false;
         }
 
         const validDescription = validateDescription(description);
         if (!validDescription) {
-            if (description.length > 1000) setError('Description must be no more than 1000 characters');
-            else {
-                const invalidCharacter = findInvalidCharacter(descriptionExpression, description);
-                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in description`);
-            }
+            setError(descriptionError(description));
             displayErrorMessage();
             return false;
         }
@@ -288,13 +266,13 @@ function CreateDeckModal({ closeModal, deckInterval }) {
         fetch('/api/create/deck', requestOptions)
             .then(response => response.json())
             .then(data => {
-                if (data.error !== undefined && data.error !== null) {
-                    setError(`${data.error}`);
-                    displayErrorMessage();
-                }
-                else {
+                if (data.error === undefined) {
                     clearInterval(deckInterval);
                     return navigate(`/deck/${data.id}`);
+                }
+                else {
+                    setError(data.error);
+                    displayErrorMessage();
                 }
             });
     }
@@ -352,45 +330,17 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
         }
     }
 
-    const titleExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>. ?/-]{1,250}$/;
-    const descriptionExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>. ?/-]{0,1000}$/;
-
-    function validateTitle(title) {
-        if (title === undefined || title === null || title.length === 0) return false;
-        return titleExpression.test(title);
-    }
-
-    function validateDescription(description) {
-        if (description === undefined || description === null || description.length === 0) return true;
-        return descriptionExpression.test(description);
-    }
-
-    function findInvalidCharacter(re, string) {
-        for (let i = 0; i < string.length; i++) {
-            if (!re.test(string[i])) return { index: i + 1, character: string[i] };
-        }
-    }
-
     function errorHandling(title, description) {
         const validTitle = validateTitle(title);
         if (!validTitle) {
-            if (title.length < 1) setError('Title required');
-            else if (title.length > 250) setError('Title must be no more than 250 characters');
-            else {
-                const invalidCharacter = findInvalidCharacter(titleExpression, title);
-                setError(`Invalid character '${invalidCharacter.character} at position ${invalidCharacter.index} in title`);
-            }
+            setError(titleError(title));
             displayErrorMessage();
             return false;
         }
 
         const validDescription = validateDescription(description);
         if (!validDescription) {
-            if (description.length > 1000) setError('Description must be no more than 1000 characters');
-            else {
-                const invalidCharacter = findInvalidCharacter(descriptionExpression, description);
-                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in description`);
-            }
+            setError(descriptionError(description));
             displayErrorMessage();
             return false;
         }
@@ -416,17 +366,17 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
         fetch(`/api/update/deck/${decks[index].id}`, requestOptions)
             .then(response => response.json())
             .then(data => {
-                if (data.error !== undefined && data.error !== null) {
-                    setError(`${data.error}`);
-                    displayErrorMessage();
-                }
-                else {
+                if (data.error === undefined) {
                     let copy = [...decks];
                     copy[index].title = title;
                     copy[index].description = description;
                     copy[index].ts = new Date().toLocaleString();
                     setDecks([...copy].sort((a, b) => Date.parse(b.ts) - Date.parse(a.ts)));
                     closeModal();
+                }
+                else {
+                    setError(`${data.error}`);
+                    displayErrorMessage();
                 }
             });
     }
@@ -500,15 +450,15 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
         fetch(`/api/delete/deck/${decks[index].id}`, requestOptions)
             .then(response => response.json())
             .then(data => {
-                if (data.error !== undefined && data.error !== null) {
-                    setError(`${data.error}`);
-                    displayErrorMessage();
-                }
-                else {
+                if (data.error === undefined) {
                     let copy = [...decks];
                     copy.splice(index, 1);
                     setDecks([...copy]);
                     closeModal();
+                }
+                else {
+                    setError(`${data.error}`);
+                    displayErrorMessage();
                 }
             });
     }

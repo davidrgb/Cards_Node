@@ -35,10 +35,14 @@ passport.deserializeUser(function (user, cb) {
     });
 });
 
+const utility = require('./utility');
+
 router.post('/signup', function (req, res, next) {
+    if (!utility.validateUsername(req.body.username)) return res.status(utility.Status.BadRequest).json({ error: utility.usernameError(req.body.username) });
+    if (!utility.validatePassword(req.body.password)) return res.status(utility.Status.BadRequest).json({ error: utility.passwordError(req.body.password) });
     connection.query('SELECT * FROM users WHERE username = ?', [req.body.username], function (err, row) {
         if (err) { return cb(err); }
-        if (row[0]) { return res.json({ authenticated: false }); }
+        if (row[0]) { return res.status(utility.Status.BadRequest).json({ error: 'Username is not available' }); }
         var salt = crypto.randomBytes(16);
         crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function (err, hashedPassword) {
             if (err) { return next(err); }
@@ -54,7 +58,7 @@ router.post('/signup', function (req, res, next) {
                 };
                 req.login(user, function (err) {
                     if (err) { return next(err); }
-                    res.json({ authenticated: true });
+                    return res.status(utility.Status.Created);
                 });
             });
         });
@@ -64,28 +68,29 @@ router.post('/signup', function (req, res, next) {
 router.post('/logout', function (req, res, next) {
     req.logout(function (err) {
         if (err) { return next(err); }
-        res.redirect('/login');
+        res.status(utility.Status.OK).redirect('/login');
     });
 });
 
-router.post('/login/password',
-    function (req, res, next) {
-        passport.authenticate('local', function (err, user, info, status) {
-            if (!user) return res.json({ authenticated: false });
-            req.login(user, function (err) {
-                if (err) { return next(err); }
-                res.json({ authenticated: true });
-            });
-        })(req, res, next);
-    }
+router.post('/login/password', function (req, res, next) {
+    if (!utility.validateUsername(req.body.username)) return res.status(utility.Status.BadRequest).json({ error: utility.usernameError(req.body.username) });
+    if (!utility.validatePassword(req.body.password)) return res.status(utility.Status.BadRequest).json({ error: utility.passwordError(req.body.password) });
+    passport.authenticate('local', function (err, user, info, status) {
+        if (!user) return res.status(utility.Status.BadRequest).json({ error: 'Incorrect username or password' });
+        req.login(user, function (err) {
+            if (err) { return next(err); }
+            return res.status(utility.Status.OK);
+        });
+    })(req, res, next);
+}
 );
 
 router.get('/session', function (req, res) {
-    if (req.session.passport === undefined || req.session.passport.user === undefined) return res.redirect('/login');
+    if (req.session.passport === undefined || req.session.passport.user === undefined) return res.status(utility.Status.Unauthorized).redirect('/login');
     else {
         let username = req.session.passport.user.username;
-        if (username === undefined || username === null) return res.redirect('/login');
-        else res.json({ message: 'Authenticated' });
+        if (username === undefined || username === null) return res.status(utility.Status.Unauthorized).redirect('/login');
+        else res.status(utility.Status.OK);
     }
 });
 
