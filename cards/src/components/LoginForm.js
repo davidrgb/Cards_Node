@@ -185,7 +185,7 @@ export default function LoginForm() {
                 {error}
             </div>
             <div className="fade fourth-fade" style={{ animationDelay: '0.8s' }}>
-                <ReCAPTCHA className="recaptcha" sitekey={SITE_KEY} ref={captchaREF} />
+                <ReCAPTCHA className="recaptcha" sitekey={SITE_KEY} ref={captchaREF} theme='dark' />
             </div>
             <div className="form-group">
                 <button className={signUpButtonClassNames} style={signUpButtonStyle} type="submit" onClick={handleSignUpClick}>Sign Up</button>
