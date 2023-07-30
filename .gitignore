@@ -3,3 +3,4 @@
 #MySQL credentials
 /backend/credentials.json
 /backend/session-cookie.json
+cards/src/data/reCAPTCHA.js

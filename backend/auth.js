@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -91,6 +92,19 @@ router.get('/session', function (req, res) {
         let username = req.session.passport.user.username;
         if (username === undefined || username === null) return res.status(utility.Status.Unauthorized).redirect('/login');
         else res.status(utility.Status.OK).json({});
+    }
+});
+
+router.post('/verify-token', async (req, res) => {
+    const { token, secretKey } = req.body;
+
+    try {
+        await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`)
+            .then(response => { return res.status(utility.Status.OK).json({ success: true, message: "Token verified", verificationInfo: response.data }) });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(utility.Status.InternalServerError).json({ success: false, message: "Token not verified"});
     }
 });
 

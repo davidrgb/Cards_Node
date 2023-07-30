@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import ReCAPTCHA from 'react-google-recaptcha';
+
+import { SITE_KEY, SECRET_KEY } from '../data/reCAPTCHA.js';
 
 import {
     validateUsername, usernameError,
@@ -87,41 +91,89 @@ export default function LoginForm() {
         return true;
     }
 
-    function signUp(username, password) {
-        if (!errorHandling(username, password)) return;
+    const [validToken, setValidToken] = useState([]);
 
+    const captchaREF = useRef(null);
+
+    const verify = async (token) => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: username, password: password })
+            body: JSON.stringify({ token: token, secretKey: SECRET_KEY })
         };
-        fetch('/signup', requestOptions)
+        return await fetch('/verify-token', requestOptions)
             .then(response => response.json()).then(data => {
-                if (data.error === undefined) return navigate(target);
-                else {
-                    setError('Username is not available');
-                    displayErrorMessage();
-                }
+                return data;
             });
     }
 
-    function logIn(username, password) {
+    async function signUp(username, password) {
         if (!errorHandling(username, password)) return;
 
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: username, password: password })
-        };
-        fetch('/login/password', requestOptions)
-            .then(response => response.json()).then(data => {
-                if (data.error === undefined) return navigate(target);
-                else {
-                    setError('Incorrect username or password');
-                    displayErrorMessage();
-                }
-            });
+        let token = captchaREF.current.getValue();
+        captchaREF.current.reset();
+
+        if (token) {
+            let valid = await verify(token);
+            setValidToken(valid);
+
+            if (valid.success === true) {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username, password: password })
+                };
+                await fetch('/signup', requestOptions)
+                    .then(response => response.json()).then(data => {
+                        if (data.error === undefined) return navigate(target);
+                        else {
+                            setError('Username is not available');
+                            displayErrorMessage();
+                        }
+                    });
+            }
+        }
+        else {
+            setError('Failed reCAPTCHA');
+            displayErrorMessage();
+        }
+
+
     }
+
+    async function logIn(username, password) {
+        if (!errorHandling(username, password)) return;
+
+        let token = captchaREF.current.getValue();
+        captchaREF.current.reset();
+
+        if (token) {
+            let valid = await verify(token);
+            setValidToken(valid);
+
+            if (valid.success === true) {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username, password: password })
+                };
+                await fetch('/login/password', requestOptions)
+                    .then(response => response.json()).then(data => {
+                        if (data.error === undefined) return navigate(target);
+                        else {
+                            setError('Incorrect username or password');
+                            displayErrorMessage();
+                        }
+                    });
+            }
+        }
+        else {
+            setError('Failed reCAPTCHA');
+            displayErrorMessage();
+        }
+    }
+
+
 
     return (
         <form className="form" id="login-form" onSubmit={handleSubmit}>
@@ -131,6 +183,9 @@ export default function LoginForm() {
             </div>
             <div className="fade fourth-fade form-error" style={errorStyle}>
                 {error}
+            </div>
+            <div className="fade fourth-fade" style={{ animationDelay: '0.8s' }}>
+                <ReCAPTCHA className="recaptcha" sitekey={SITE_KEY} ref={captchaREF} />
             </div>
             <div className="form-group">
                 <button className={signUpButtonClassNames} style={signUpButtonStyle} type="submit" onClick={handleSignUpClick}>Sign Up</button>
