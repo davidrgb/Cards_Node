@@ -47,7 +47,6 @@ export default function LoginForm() {
     function displayErrorMessage() {
         if (error !== '') {
             setErrorStyle({
-                animationDelay: '0.8s',
                 display: 'block',
             });
             signUpButtonClassNames = 'fade fifth-fade form-button';
@@ -60,7 +59,6 @@ export default function LoginForm() {
     function hideErrorMessage() {
         if (error === '') {
             setErrorStyle({
-                animationDelay: '0.8s',
                 display: 'none',
             });
         }
