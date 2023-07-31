@@ -176,8 +176,8 @@ export default function LoginForm() {
     return (
         <form className="form" id="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
-                <input className='fade second-fade form-input' style={{ animationDelay: '0.6s' }} type="text" name="username" placeholder="Username"></input>
-                <input className='fade third-fade form-input' style={{ animationDelay: '0.7s' }} type="password" name="password" placeholder="Password"></input>
+                <input className='fade second-fade form-input' style={{ animationDelay: '0.6s' }} type="text" name="username" placeholder="Username" maxlength="16"></input>
+                <input className='fade third-fade form-input' style={{ animationDelay: '0.7s' }} type="password" name="password" placeholder="Password" maxlength="32"></input>
             </div>
             <div className="fade fourth-fade form-error" style={errorStyle}>
                 {error}
