@@ -13,6 +13,7 @@
     transition: all is ease;
     transition-duration: 0.2s;
     width: 100%;
+    word-break: break-all;
 }
 
 .deck-div:hover {
