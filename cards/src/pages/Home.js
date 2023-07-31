@@ -16,7 +16,6 @@ import { Deck } from '../data/Deck.js';
 import {
     validateTitle, titleError,
     validateDescription, descriptionError,
-    Status,
 } from '../data/Utility.js';
 
 import DeckView from '../components/DeckView';

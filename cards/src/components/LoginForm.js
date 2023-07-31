@@ -9,7 +9,6 @@ import { SITE_KEY, SECRET_KEY } from '../data/reCAPTCHA.js';
 import {
     validateUsername, usernameError,
     validatePassword, passwordError,
-    Status,
 } from '../data/Utility.js';
 
 import './Form.css';
