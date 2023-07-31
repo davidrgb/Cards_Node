@@ -1,15 +1,24 @@
+.login-wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    width: 100vw;
+}
+
 .login {
     align-items: center;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    height: 100vh;
     justify-content: center;
-    width: 100vw;
+    padding-bottom: 3rem;
+    padding-top: 3rem;
 }
 
 .login-stack {
-    height: 175px;
+    height: 135px;
     position: relative;
     width: 250px
 }

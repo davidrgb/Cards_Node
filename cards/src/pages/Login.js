@@ -34,14 +34,16 @@ export default function Login() {
     return authenticated === false ? (
         loading ?
             <Loading /> :
-            <div className='login'>
-                <div className='login-stack'>
-                    <div className='login-card login-left'></div>
-                    <div className='login-card login-center'></div>
-                    <div className='login-card login-right'></div>
+            <div className="login-wrapper">
+                <div className='login'>
+                    <div className='login-stack'>
+                        <div className='login-card login-left'></div>
+                        <div className='login-card login-center'></div>
+                        <div className='login-card login-right'></div>
+                    </div>
+                    <h1 className='fade first-fade' style={{ animationDelay: '0.5s' }}>Cards</h1>
+                    <LoginForm />
                 </div>
-                <h1 className='fade first-fade' style={{ animationDelay: '0.5s' }}>Cards</h1>
-                <LoginForm />
             </div>
     ) : <div></div>;
 }
