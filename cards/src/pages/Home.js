@@ -205,14 +205,14 @@ export default function Home() {
                     </div>
                 }
                 <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
-                {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} />}
-                {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} />}
-                {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} />}
+                {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} setLoading={setLoading} />}
+                {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} setLoading={setLoading} />}
+                {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} setLoading={setLoading} />}
             </div>
     );
 }
 
-function CreateDeckModal({ closeModal, deckInterval }) {
+function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
@@ -268,8 +268,10 @@ function CreateDeckModal({ closeModal, deckInterval }) {
         return true;
     }
 
-    function createDeck(title, description) {
+    async function createDeck(title, description) {
         if (!errorHandling(title, description)) return;
+
+        setLoading(true);
 
         if (description === undefined) description = null;
 
@@ -278,7 +280,7 @@ function CreateDeckModal({ closeModal, deckInterval }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title: title, description: description })
         };
-        fetch('/api/create/deck', requestOptions)
+        await fetch('/api/create/deck', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.error === undefined) {
@@ -286,6 +288,7 @@ function CreateDeckModal({ closeModal, deckInterval }) {
                     return navigate(`/deck/${data.id}`);
                 }
                 else {
+                    setLoading(false);
                     setError(data.error);
                     displayErrorMessage();
                 }
@@ -314,7 +317,7 @@ function CreateDeckModal({ closeModal, deckInterval }) {
     );
 }
 
-function EditDeckModal({ closeModal, decks, index, setDecks }) {
+function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
@@ -368,8 +371,10 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
         return true;
     }
 
-    function editDeck(title, description) {
+    async function editDeck(title, description) {
         if (!errorHandling(title, description)) return;
+
+        setLoading(true);
 
         if (description === undefined) description = null;
 
@@ -378,10 +383,11 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title: title, description: description })
         };
-        fetch(`/api/update/deck/${decks[index].id}`, requestOptions)
+        await fetch(`/api/update/deck/${decks[index].id}`, requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.error === undefined) {
+                    setLoading(false);
                     let copy = [...decks];
                     copy[index].title = title;
                     copy[index].description = description;
@@ -390,6 +396,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
                     closeModal();
                 }
                 else {
+                    setLoading(false);
                     setError(`${data.error}`);
                     displayErrorMessage();
                 }
@@ -420,7 +427,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks }) {
     );
 }
 
-function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
+function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
@@ -456,22 +463,26 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks }) {
         }
     }
 
-    function deleteDeck() {
+    async function deleteDeck() {
         errorHandling();
+
+        setLoading(true);
 
         const requestOptions = {
             method: 'POST',
         };
-        fetch(`/api/delete/deck/${decks[index].id}`, requestOptions)
+        await fetch(`/api/delete/deck/${decks[index].id}`, requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (data.error === undefined) {
+                    setLoading(false);
                     let copy = [...decks];
                     copy.splice(index, 1);
                     setDecks([...copy]);
                     closeModal();
                 }
                 else {
+                    setLoading(false);
                     setError(`${data.error}`);
                     displayErrorMessage();
                 }
