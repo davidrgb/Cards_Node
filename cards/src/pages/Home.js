@@ -437,7 +437,8 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        deleteDeck();
+        const title = e.target.title.value;
+        deleteDeck(title);
     }
 
     function displayErrorMessage() {
@@ -456,15 +457,23 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
         }
     }
 
-    function errorHandling() {
+    function errorHandling(title) {
+        if (title !== originalTitle) {
+            setError('Title does not match');
+            displayErrorMessage();
+            return false;
+        }
+
         if (error !== '') {
             setError('');
             hideErrorMessage();
         }
+        
+        return true;
     }
 
-    async function deleteDeck() {
-        errorHandling();
+    async function deleteDeck(title) {
+        if (!errorHandling(title)) return;
 
         setLoading(true);
 
@@ -489,18 +498,24 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
             });
     }
 
+    const originalTitle = decks[index].title;
+    const [temp, setTemp] = useState({ title: decks[index].title });
+
     return createPortal(
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
                     <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick}><CloseIcon /></button>
                     <div className="form-group fade fourth-fade-fast">
-                        Delete {decks[index].title}?
+                        <span>Delete <span style={{color: '#5AB0FF'}}>{decks[index].title}</span>?</span>
                     </div>
-                    <div className="form-error fade fifth-fade-fast" style={errorStyle}>
+                    <div className="form-group">
+                        <textarea className="fade fifth-fade-fast" name="title" placeholder="Type title here to verify" maxlength="250" onChange={(e) => setTemp({ title: e.target.value })}></textarea>
+                    </div>
+                    <div className="form-error fade sixth-fade-fast" style={errorStyle}>
                         {error}
                     </div>
-                    <div className="form-group fade sixth-fade-fast">
+                    <div className="form-group fade seventh-fade-fast">
                         <button className="warning-button" type="submit">Delete</button>
                     </div>
                 </form>
