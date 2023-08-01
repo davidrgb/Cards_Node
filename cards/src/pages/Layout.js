@@ -14,7 +14,7 @@ export default function Layout() {
       <nav>
         <ul className="nav-row">
           <li>
-            <Link to="/"><button className="rounded-square-button"><HomeIcon /></button></Link>
+            <Link to="/"><button className="rounded-square-button" title="Home"><HomeIcon /></button></Link>
           </li>
           <li>
             <LogOutButton />

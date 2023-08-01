@@ -183,8 +183,8 @@ export default function Home() {
                     decks.length > 0 ?
                         <div className="control-row fade first-fade">
                             <input className="search" name="search" placeholder="Search" maxlength="250" onChange={(e) => setSearchKey(e.target.value)}></input>
-                            <button className="rounded-square-button" onClick={toggleSortBy}>{sortBy.icon}</button>
-                            <button className="rounded-square-button" onClick={toggleOrderBy}>{orderBy.icon}</button>
+                            <button className="rounded-square-button" onClick={toggleSortBy} title={`Sort by ${sortBy.value}`}>{sortBy.icon}</button>
+                            <button className="rounded-square-button" onClick={toggleOrderBy} title={`Order by ${orderBy.value}`}>{orderBy.icon}</button>
                         </div> :
                         <></>
                 }
@@ -192,7 +192,7 @@ export default function Home() {
                     <ul className="deck-list">
                         {
                             decks.map((deck, index) => {
-                                return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s`, display: searchKey !== null && searchKey.length > 0 ? deck.title.toUpperCase().includes(searchKey.toUpperCase()) ? 'flex' : 'none' : 'flex' }}>
+                                return <div className="deck-row fade" style={{ animationDelay: `${0.2 + (0.025 * (index + 1))}s`, display: searchKey !== null && searchKey.length > 0 ? deck.title.toUpperCase().includes(searchKey.toUpperCase()) ? 'flex' : 'none' : 'flex' }} title="Open Deck">
                                     <DeckView deck={deck} openEditModal={() => openEditModal(index)} openDeleteModal={() => openDeleteModal(index)} username={username} deckInterval={deckInterval} />
                                 </div>
                             })
@@ -203,7 +203,7 @@ export default function Home() {
                         <h3 className="fade second-fade" style={{ color: 'white', margin: '0' }}>Start by creating your first deck</h3>
                     </div>
                 }
-                <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal}><AddIcon /></button>
+                <button className="circular-button fade" style={{ animationDelay: `${0.3 + (0.025 * (decks.length))}s` }} onClick={openCreateModal} title="Create Deck"><AddIcon /></button>
                 {createModalOpen && <CreateDeckModal closeModal={closeCreateModal} deckInterval={deckInterval} setLoading={setLoading} />}
                 {editModalOpen && <EditDeckModal closeModal={closeEditModal} decks={decks} index={editIndex} setDecks={setDecks} setLoading={setLoading} />}
                 {deleteModalOpen && <DeleteDeckModal closeModal={closeDeleteModal} decks={decks} index={deleteIndex} setDecks={setDecks} setLoading={setLoading} />}
@@ -304,7 +304,7 @@ function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="create-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} disabled={inputDisabled}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} title="Cancel" disabled={inputDisabled}><CloseIcon /></button>
                     <div className="form-group">
                         <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250" readOnly={inputDisabled}></textarea>
                         <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" readOnly={inputDisabled}></textarea>
@@ -420,7 +420,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="edit-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} disabled={inputDisabled}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} title="Cancel" disabled={inputDisabled}><CloseIcon /></button>
                     <div className="form-group">
                         <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })} readOnly={inputDisabled}></textarea>
                         <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })} readOnly={inputDisabled}></textarea>
@@ -521,7 +521,7 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} disabled={inputDisabled}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} title="Cancel" disabled={inputDisabled}><CloseIcon /></button>
                     <div className="form-group fade fourth-fade-fast">
                         <span>Delete <span style={{color: '#5AB0FF'}}>{decks[index].title}</span>?</span>
                     </div>

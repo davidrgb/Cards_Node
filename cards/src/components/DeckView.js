@@ -26,8 +26,8 @@ export default function DeckView({ deck, openEditModal, openDeleteModal, usernam
                 </div>
             </div>
             <div className="button-column">
-                <button className="square-button" style={{ borderRadius: "10px 10px 0 0" }} disabled={username === null || deck.owner !== username} onClick={(event) => { event.stopPropagation(); openEditModal() }}><EditIcon /></button>
-                <button className="square-button" style={{ borderRadius: "0 0 10px 10px" }} disabled={username === null || deck.owner !== username} onClick={(event) => { event.stopPropagation(); openDeleteModal() }}><DeleteIcon /></button>
+                <button className="square-button" style={{ borderRadius: "10px 10px 0 0" }} title="Edit Deck" disabled={username === null || deck.owner !== username} onClick={(event) => { event.stopPropagation(); openEditModal() }}><EditIcon /></button>
+                <button className="square-button" style={{ borderRadius: "0 0 10px 10px" }} title="Delete Deck" disabled={username === null || deck.owner !== username} onClick={(event) => { event.stopPropagation(); openDeleteModal() }}><DeleteIcon /></button>
             </div>
         </div>
     );

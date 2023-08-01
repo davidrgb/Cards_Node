@@ -24,6 +24,6 @@ export default function LogOutButton() {
     }
 
     return (
-        <button className="rounded-square-button" onClick={handleLogOutClick} disabled={inputDisabled}><LogoutIcon /></button>
+        <button className="rounded-square-button" onClick={handleLogOutClick} title="Log Out" disabled={inputDisabled}><LogoutIcon /></button>
     );
 }
