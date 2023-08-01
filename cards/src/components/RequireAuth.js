@@ -1,24 +1,30 @@
-import { useNavigate } from 'react-router-dom';
-
 import { useEffect, useState } from 'react';
 
-export default function RequireAuth({ children, target='/' }) {
+import { useNavigate, useParams } from 'react-router-dom';
+
+import Loading from './Loading';
+
+export default function RequireAuth({ children, target = '/' }) {
+    let { deckId } = useParams();
     const navigate = useNavigate();
     const [authenticated, setAuthenticated] = useState();
+    const [loading, setLoading] = useState(true);
 
-    const requestOptions = {
-        method: 'GET',
-    };
+    if (target === '/deck') target += `/${deckId}`;
 
     useEffect(() => {
-        const getAuthenticated = async () => await fetch('/session', requestOptions)
-            .then(response => {
-                setAuthenticated(response.redirected === false);
-            });
-        getAuthenticated();
+        const firstRun = async () => {
+            await fetch('/session')
+                .then(response => {
+                    setAuthenticated(response.redirected === false);
+                });
+            setLoading(false);
+        }
+        firstRun();
+
         if (authenticated !== undefined && authenticated !== null && !authenticated) navigate('/login', { state: { target: target } });
     });
 
 
-    return authenticated ? children : <div></div>;
+    return loading ? <Loading /> : authenticated ? children : <div></div>;
 }

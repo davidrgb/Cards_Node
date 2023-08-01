@@ -1,21 +1,29 @@
-import './LogOutButton.css';
+import { useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
+import LogoutIcon from '@mui/icons-material/Logout';
+
+import './Button.css';
+
 export default function LogOutButton() {
+    const [inputDisabled, setInputDisabled] = useState(false);
+
     const navigate = useNavigate();
 
-    function handleLogOutClick() {
+    async function handleLogOutClick() {
+        setInputDisabled(true);
+
         const requestOptions = {
             method: 'POST',
         };
-        fetch('/logout', requestOptions)
-            .then(response => {
-                navigate('/login', { state: { target: '/' } });
-            });
+        await fetch('/logout', requestOptions)
+            .then(navigate('/login', { state: { target: '/' } }));
+
+        setInputDisabled(false);
     }
 
     return (
-        <button className="log-out-button" onClick={handleLogOutClick}>Log Out</button>
+        <button className="rounded-square-button" onClick={handleLogOutClick} title="Log Out" disabled={inputDisabled}><LogoutIcon /></button>
     );
 }

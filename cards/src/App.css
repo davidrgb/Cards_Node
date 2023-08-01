@@ -1,11 +1,23 @@
 body {
   background-color: #1A1A1A;
+  bottom: 0;
   color: #5AB0FF;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  right: 0;
   text-align: center;
+  top: 0;
+  width: 100%;
 }
 
 h1 {
+  color: white;
   font-size: 3rem;
   font-weight: normal;
   margin: 0px;
+}
+
+#root {
+  height: 100%;
 }

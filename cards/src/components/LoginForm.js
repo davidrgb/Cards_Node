@@ -1,23 +1,36 @@
-import './LoginForm.css';
+import { useState, useRef } from 'react';
 
-import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import ReCAPTCHA from 'react-google-recaptcha';
+
+import { SITE_KEY, SECRET_KEY } from '../data/reCAPTCHA.js';
+
+import {
+    validateUsername, usernameError,
+    validatePassword, passwordError,
+} from '../data/Utility.js';
+
+import './Form.css';
 
 export default function LoginForm() {
     const { state } = useLocation();
     const { target } = state ? state : '/';
-    var createAccount = false;
 
-    function handleSignUpClick(e) {
-        createAccount = true;
+    const [createAccount, setCreateAccount] = useState(false);
+    const [inputDisabled, setInputDisabled] = useState(false);
+
+    function handleSignUpClick() {
+        setCreateAccount(true);
     }
 
-    function handleLogInClick(e) {
-        createAccount = false;
+    function handleLogInClick() {
+        setCreateAccount(false);
     }
 
     function handleSubmit(e) {
         e.preventDefault();
+        setInputDisabled(true);
         const username = e.target.username.value;
         const password = e.target.password.value;
         if (createAccount === true) signUp(username, password);
@@ -27,44 +40,19 @@ export default function LoginForm() {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
 
-    let signUpButtonClassNames = 'fade fourth-fade login-form-button';
-    let logInButtonClassNames = 'fade fifth-fade login-form-button';
-
     function displayErrorMessage() {
         if (error !== '') {
             setErrorStyle({
                 display: 'block',
             });
-            signUpButtonClassNames = 'fade fifth-fade login-form-button';
-            logInButtonClassNames = 'fade sixth-fade login-form-button';
         }
     }
 
     function hideErrorMessage() {
         if (error === '') {
-            setError({
+            setErrorStyle({
                 display: 'none',
             });
-        }
-    }
-
-    const usernameExpression = /^[a-zA-Z._0-9-]{1,16}$/;
-    const passwordExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>.?/-]{8,32}$/;
-    const passwordCharacterExpression = /^[a-zA-Z0-9~`!@#$%^&*()_+={[}\]|\\|:;"'<,>.?/-]$/;
-
-    function validateUsername(username) {
-        if (username === undefined || username === null || username.length === 0) return false;
-        return usernameExpression.test(username);
-    }
-
-    function validatePassword(password) {
-        if (password === undefined || password === null || password.length === 0) return false;
-        return passwordExpression.test(password);
-    }
-
-    function findInvalidCharacter(re, string) {
-        for (let i = 0; i < string.length; i++) {
-            if (!re.test(string[i])) return { index: i + 1, character: string[i] };
         }
     }
 
@@ -73,24 +61,14 @@ export default function LoginForm() {
     function errorHandling(username, password) {
         const validUsername = validateUsername(username);
         if (!validUsername) {
-            if (username.length < 1) setError('Username required');
-            else if (username.length > 16) setError('Username must be no more than 16 characters');
-            else {
-                const invalidCharacter = findInvalidCharacter(usernameExpression, username);
-                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in username`);
-            }
+            setError(usernameError(username));
             displayErrorMessage();
             return false;
         }
 
         const validPassword = validatePassword(password);
         if (!validPassword) {
-            if (password.length < 8) setError('Password must be at least 8 characters');
-            else if (password.length > 32) setError('Password must be no more than 32 characters');
-            else {
-                const invalidCharacter = findInvalidCharacter(passwordCharacterExpression, password);
-                setError(`Invalid character '${invalidCharacter.character}' at position ${invalidCharacter.index} in password`);
-            }
+            setError(passwordError(password));
             displayErrorMessage();
             return false;
         }
@@ -103,52 +81,112 @@ export default function LoginForm() {
         return true;
     }
 
-    function signUp(username, password) {
-        if (!errorHandling(username, password)) return;
+    const captchaREF = useRef(null);
 
+    const verify = async (token) => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: username, password: password })
+            body: JSON.stringify({ token: token, secretKey: SECRET_KEY })
         };
-        fetch('/signup', requestOptions)
+        return await fetch('/verify-token', requestOptions)
             .then(response => response.json()).then(data => {
-                if (data.authenticated === true) return navigate(target);
-                setError('Username is not available');
-                displayErrorMessage();
+                return data;
             });
     }
 
-    function logIn(username, password) {
-        if (!errorHandling(username, password)) return;
+    async function signUp(username, password) {
+        if (!errorHandling(username, password)) {
+            setInputDisabled(false);
+            return;
+        }
 
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: username, password: password })
-        };
-        fetch('/login/password', requestOptions)
-            .then(response => response.json()).then(data => {
-                if (data.authenticated === true) return navigate(target);
-                setError('Incorrect username or password');
-                displayErrorMessage();
-            });
+        const token = captchaREF.current.getValue();
+        captchaREF.current.reset();
+
+        if (token) {
+            const valid = await verify(token);
+
+            if (valid.success === true) {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username, password: password })
+                };
+                await fetch('/signup', requestOptions)
+                    .then(response => response.json()).then(data => {
+                        if (data.error === undefined) return navigate(target);
+                        else {
+                            setError('Username is not available');
+                            displayErrorMessage();
+                            setInputDisabled(false);
+                        }
+                    });
+            }
+        }
+        else {
+            setError('Failed reCAPTCHA');
+            displayErrorMessage();
+            setInputDisabled(false);
+        }
+
+
     }
 
-    // Fade classes used for animations on Login page
+    async function logIn(username, password) {
+        if (!errorHandling(username, password)) {
+            setInputDisabled(false);
+            return;
+        }
+
+        const token = captchaREF.current.getValue();
+        captchaREF.current.reset();
+
+
+        if (token) {
+            const valid = await verify(token);
+
+            if (valid.success === true) {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username, password: password })
+                };
+                await fetch('/login/password', requestOptions)
+                    .then(response => response.json()).then(data => {
+                        if (data.error === undefined) return navigate(target);
+                        else {
+                            setError('Incorrect username or password');
+                            displayErrorMessage();
+                            setInputDisabled(false);
+                        }
+                    });
+            }
+        }
+        else {
+            setError('Failed reCAPTCHA');
+            displayErrorMessage();
+            setInputDisabled(false);
+        }
+    }
+
+
 
     return (
-        <form className="login-form" id="login-form" onSubmit={handleSubmit}>
-            <div className="login-form-group">
-                <input className='fade second-fade login-form-input' type="text" name="username" placeholder="Username"></input>
-                <input className='fade third-fade login-form-input' type="password" name="password" placeholder="Password"></input>
+        <form className="form" id="login-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+                <input className='fade second-fade form-input' style={{ animationDelay: '0.6s' }} type="text" name="username" placeholder="Username" readOnly={inputDisabled} maxlength="16"></input>
+                <input className='fade third-fade form-input' style={{ animationDelay: '0.7s' }} type="password" name="password" placeholder="Password" readOnly={inputDisabled} maxlength="32"></input>
             </div>
-            <div className="fade fourth-fade login-form-error" style={errorStyle}>
+            <div className="fade fourth-fade form-error" style={errorStyle}>
                 {error}
             </div>
-            <div className="login-form-group">
-                <button className={signUpButtonClassNames} type="submit" onClick={handleSignUpClick}>Sign Up</button>
-                <button className={logInButtonClassNames} type="submit" onClick={handleLogInClick}>Login</button>
+            <div className="fade fourth-fade" style={{ animationDelay: '0.8s' }}>
+                <ReCAPTCHA className="recaptcha" sitekey={SITE_KEY} ref={captchaREF} theme='dark' />
+            </div>
+            <div className="form-group">
+                <button className="fade fourth-fade form-button" style={{ animationDelay: '0.9s' }} type="submit" onClick={handleSignUpClick} disabled={inputDisabled}>Sign Up</button>
+                <button className="fade fourth-fade form-button" style={{ animationDelay: '1s' }} type="submit" onClick={handleLogInClick} disabled={inputDisabled}>Login</button>
             </div>
         </form>
     );

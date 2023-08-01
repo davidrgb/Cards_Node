@@ -1,19 +1,32 @@
+.login-wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    width: 100vw;
+}
+
 .login {
     align-items: center;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    height: 100vh;
     justify-content: center;
+    padding-bottom: 3rem;
+    padding-top: 3rem;
 }
 
-.stack {
-    height: 175px;
+.login-stack {
+    height: 135px;
     position: relative;
     width: 250px
 }
 
-.card {
+.login-card {
+    animation-timing-function: ease-out;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
     background-color: #5AB0FF;
     border: 2px solid #1A1A1A;
     border-radius: 5px;
@@ -22,19 +35,16 @@
     width: 100px;
 }
 
-.left {
-    animation-timing-function: ease-out;
+.login-left {
     animation-delay: 0.1s;
-    animation-duration: 0.2s;
-    animation-fill-mode: forwards;
-    animation-name: slide-left;
+    animation-name: login-slide-left;
     left: 0;
     rotate: 0deg;
     top: -500px;
     z-index: 1;
 }
 
-@keyframes slide-left {
+@keyframes login-slide-left {
     from {
         rotate: 0deg;
         top: -500px;
@@ -45,36 +55,30 @@
     }
 }
 
-.center {
-    animation-timing-function: ease-out;
+.login-center {
     animation-delay: 0.3s;
-    animation-duration: 0.2s;
-    animation-fill-mode: forwards;
-    animation-name: slide-center;
+    animation-name: login-slide-center;
     left: 75px;
     rotate: 0deg;
     top: -500px;
     z-index: 2;
 }
 
-@keyframes slide-center {
+@keyframes login-slide-center {
     from {top: -500px;}
     to {top: 0;}
 }
 
-.right {
-    animation-timing-function: ease-out;
+.login-right {
     animation-delay: 0.2s;
-    animation-duration: 0.2s;
-    animation-fill-mode: forwards;
-    animation-name: slide-right;
+    animation-name: login-slide-right;
     right: 0;
     rotate: 0deg;
     top: -500px;
     z-index: 1;
 }
 
-@keyframes slide-right {
+@keyframes login-slide-right {
     from {
         rotate: 0deg;
         top: -500px;
@@ -83,41 +87,4 @@
         rotate: 12deg;
         top: -15px;
     }
-}
-
-@keyframes fade-in {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-.fade {
-    animation-timing-function: ease-out;
-    animation-duration: 0.2s;
-    animation-fill-mode: forwards;
-    animation-name: fade-in;
-    opacity: 0;
-}
-
-.first-fade {
-    animation-delay: 0.5s;
-}
-
-.second-fade {
-    animation-delay: 0.6s;
-}
-
-.third-fade {
-    animation-delay: 0.7s;
-}
-
-.fourth-fade {
-    animation-delay: 0.8s;
-}
-
-.fifth-fade {
-    animation-delay: 0.9s;
-}
-
-.sixth-fade {
-    animation-delay: 1.0s;
 }

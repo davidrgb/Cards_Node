@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -35,10 +36,14 @@ passport.deserializeUser(function (user, cb) {
     });
 });
 
+const utility = require('./utility');
+
 router.post('/signup', function (req, res, next) {
+    if (!utility.validateUsername(req.body.username)) return res.status(utility.Status.BadRequest).json({ error: utility.usernameError(req.body.username) });
+    if (!utility.validatePassword(req.body.password)) return res.status(utility.Status.BadRequest).json({ error: utility.passwordError(req.body.password) });
     connection.query('SELECT * FROM users WHERE username = ?', [req.body.username], function (err, row) {
         if (err) { return cb(err); }
-        if (row[0]) { return res.json({ authenticated: false }); }
+        if (row[0]) { return res.status(utility.Status.BadRequest).json({ error: 'Username is not available' }); }
         var salt = crypto.randomBytes(16);
         crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function (err, hashedPassword) {
             if (err) { return next(err); }
@@ -54,7 +59,7 @@ router.post('/signup', function (req, res, next) {
                 };
                 req.login(user, function (err) {
                     if (err) { return next(err); }
-                    res.json({ authenticated: true });
+                    return res.status(utility.Status.Created).json({});
                 });
             });
         });
@@ -64,27 +69,43 @@ router.post('/signup', function (req, res, next) {
 router.post('/logout', function (req, res, next) {
     req.logout(function (err) {
         if (err) { return next(err); }
-        res.redirect('/login');
+        res.status(utility.Status.OK).redirect('/login');
     });
 });
 
-router.post('/login/password',
-    function (req, res, next) {
-        passport.authenticate('local', function (err, user, info, status) {
-            if (!user) return res.json({ authenticated: false });
-            req.login(user, function (err) {
-                if (err) { return next(err); }
-                res.json({ authenticated: true });
-            });
-        })(req, res, next);
-    }
+router.post('/login/password', function (req, res, next) {
+    if (!utility.validateUsername(req.body.username)) return res.status(utility.Status.BadRequest).json({ error: utility.usernameError(req.body.username) });
+    if (!utility.validatePassword(req.body.password)) return res.status(utility.Status.BadRequest).json({ error: utility.passwordError(req.body.password) });
+    passport.authenticate('local', function (err, user, info, status) {
+        if (!user) return res.status(utility.Status.BadRequest).json({ error: 'Incorrect username or password' });
+        req.login(user, function (err) {
+            if (err) { return next(err); }
+            return res.status(utility.Status.OK).json({});
+        });
+    })(req, res, next);
+}
 );
 
 router.get('/session', function (req, res) {
-    if (req.session.passport === undefined) return res.redirect('/login');
-    let username = req.session.passport.user.username;
-    if (username === undefined || username === null) return res.redirect('/login');
-    else res.json({ message: 'Authenticated' });
+    if (req.session.passport === undefined || req.session.passport.user === undefined) return res.status(utility.Status.Unauthorized).redirect('/login');
+    else {
+        let username = req.session.passport.user.username;
+        if (username === undefined || username === null) return res.status(utility.Status.Unauthorized).redirect('/login');
+        else res.status(utility.Status.OK).json({});
+    }
+});
+
+router.post('/verify-token', async (req, res) => {
+    const { token, secretKey } = req.body;
+
+    try {
+        await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`)
+            .then(response => { return res.status(utility.Status.OK).json({ success: true, message: "Token verified", verificationInfo: response.data }) });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(utility.Status.InternalServerError).json({ success: false, message: "Token not verified"});
+    }
 });
 
 module.exports = router;

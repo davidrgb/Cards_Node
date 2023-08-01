@@ -1,37 +1,55 @@
-import './Login.css';
+import '../../package.json';
 
-import LoginForm from '../components/LoginForm';
+import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import Loading from '../components/Loading';
+import LoginForm from '../components/LoginForm';
+
+import '../components/Fade.css';
+
+import './Login.css';
 
 export default function Login() {
     const navigate = useNavigate();
     const [authenticated, setAuthenticated] = useState();
-
-    const requestOptions = {
-        method: 'GET',
-    };
+    const [version, setVersion] = useState();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const getAuthenticated = async () => await fetch('/session', requestOptions)
-            .then(response => {
-                setAuthenticated(response.redirected === false);
-            });
-        getAuthenticated();
+        const firstRun = async () => {
+            await fetch('/session')
+                .then(response => {
+                    setAuthenticated(response.redirected === false);
+                });
+            
+            await fetch('/api/version')
+                .then(response => response.json())
+                .then(data => setVersion(data.version));
+
+            setLoading(false);
+        }
+        firstRun();
+
         if (authenticated !== undefined && authenticated !== null && authenticated) navigate('/');
     });
 
     return authenticated === false ? (
-        <div className='login'>
-            <div className='stack'>
-                <div className='card left'></div>
-                <div className='card center'></div>
-                <div className='card right'></div>
-            </div>          
-            <h1 className='fade first-fade'>Cards</h1>
-            <LoginForm />
-        </div>
+        loading ?
+            <Loading /> :
+            <div className="login-wrapper">
+                <div className='login'>
+                    <div className='login-stack'>
+                        <div className='login-card login-left'></div>
+                        <div className='login-card login-center'></div>
+                        <div className='login-card login-right'></div>
+                    </div>
+                    <div title={`Version ${version}`}>
+                        <h1 className='fade first-fade' style={{ animationDelay: '0.5s' }}>Cards</h1>
+                    </div>
+                    <LoginForm />
+                </div>
+            </div>
     ) : <div></div>;
 }
