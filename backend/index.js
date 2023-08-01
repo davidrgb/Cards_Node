@@ -159,6 +159,10 @@ app.get('/api/user', function (req, res) {
   return res.status(utility.Status.OK).json({ username: req.session.passport.user.username });
 });
 
+app.get('/api/version', (req, res) => {
+  return res.status(utility.Status.OK).json({ version: package.version });
+})
+
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../cards', 'build', 'index.html'));
 });

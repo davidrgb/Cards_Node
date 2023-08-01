@@ -1,3 +1,5 @@
+import '../../package.json';
+
 import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
@@ -12,18 +14,20 @@ import './Login.css';
 export default function Login() {
     const navigate = useNavigate();
     const [authenticated, setAuthenticated] = useState();
+    const [version, setVersion] = useState();
     const [loading, setLoading] = useState(true);
-
-    const requestOptions = {
-        method: 'GET',
-    };
 
     useEffect(() => {
         const firstRun = async () => {
-            await fetch('/session', requestOptions)
+            await fetch('/session')
                 .then(response => {
                     setAuthenticated(response.redirected === false);
                 });
+            
+            await fetch('/api/version')
+                .then(response => response.json())
+                .then(data => setVersion(data.version));
+
             setLoading(false);
         }
         firstRun();
@@ -41,7 +45,9 @@ export default function Login() {
                         <div className='login-card login-center'></div>
                         <div className='login-card login-right'></div>
                     </div>
-                    <h1 className='fade first-fade' style={{ animationDelay: '0.5s' }}>Cards</h1>
+                    <div title={`Version ${version}`}>
+                        <h1 className='fade first-fade' style={{ animationDelay: '0.5s' }}>Cards</h1>
+                    </div>
                     <LoginForm />
                 </div>
             </div>
