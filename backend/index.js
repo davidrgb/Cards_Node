@@ -20,9 +20,9 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const package = require('./package.json');
 
-const production = package.production;
+require('dotenv').config()
 
-const port = production ? 3010 : 3011;
+const port = process.env.STATUS === 'production' ? process.env.PROD_PORT : process.env.DEV_PORT;
 
 const sessionCookie = require('./session-cookie.json');
 
