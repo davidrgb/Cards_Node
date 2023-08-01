@@ -20,18 +20,17 @@ export default function LoginForm() {
     const [createAccount, setCreateAccount] = useState(false);
     const [inputDisabled, setInputDisabled] = useState(false);
 
-    function handleSignUpClick(e) {
-        setInputDisabled(true);
+    function handleSignUpClick() {
         setCreateAccount(true);
     }
 
-    function handleLogInClick(e) {
-        setInputDisabled(true);
+    function handleLogInClick() {
         setCreateAccount(false);
     }
 
     function handleSubmit(e) {
         e.preventDefault();
+        setInputDisabled(true);
         const username = e.target.username.value;
         const password = e.target.password.value;
         if (createAccount === true) signUp(username, password);
@@ -142,6 +141,7 @@ export default function LoginForm() {
 
         const token = captchaREF.current.getValue();
         captchaREF.current.reset();
+
 
         if (token) {
             const valid = await verify(token);
