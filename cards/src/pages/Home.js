@@ -214,6 +214,7 @@ export default function Home() {
 function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
+    const [inputDisabled, setInputDisabled] = useState(false);
 
     const handleClick = () => {
         closeModal();
@@ -221,6 +222,7 @@ function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setInputDisabled(true);
         const title = e.target.title.value;
         const description = e.target.description.value.length > 0 ? e.target.description.value : null;
         createDeck(title, description);
@@ -268,7 +270,10 @@ function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
     }
 
     async function createDeck(title, description) {
-        if (!errorHandling(title, description)) return;
+        if (!errorHandling(title, description)) {
+            setInputDisabled(false);
+            return;
+        }
 
         setLoading(true);
 
@@ -290,6 +295,7 @@ function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
                     setLoading(false);
                     setError(data.error);
                     displayErrorMessage();
+                    setInputDisabled(false);
                 }
             });
     }
@@ -298,16 +304,16 @@ function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="create-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} disabled={inputDisabled}><CloseIcon /></button>
                     <div className="form-group">
-                        <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250"></textarea>
-                        <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5"></textarea>
+                        <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250" readOnly={inputDisabled}></textarea>
+                        <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" readOnly={inputDisabled}></textarea>
                     </div>
                     <div className="form-error fade sixth-fade-fast" style={errorStyle}>
                         {error}
                     </div>
                     <div className="form-group fade seventh-fade-fast">
-                        <button type="submit">Create</button>
+                        <button type="submit" disabled={inputDisabled}>Create</button>
                     </div>
                 </form>
             </div>
@@ -319,6 +325,7 @@ function CreateDeckModal({ closeModal, deckInterval, setLoading }) {
 function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
+    const [inputDisabled, setInputDisabled] = useState(false);
 
     const handleClick = () => {
         closeModal();
@@ -326,6 +333,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setInputDisabled(true);
         const title = e.target.title.value;
         const description = e.target.description.value.length > 0 ? e.target.description.value : null;
         editDeck(title, description);
@@ -371,7 +379,10 @@ function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
     }
 
     async function editDeck(title, description) {
-        if (!errorHandling(title, description)) return;
+        if (!errorHandling(title, description)) {
+            setInputDisabled(false);
+            return;
+        }
 
         setLoading(true);
 
@@ -398,6 +409,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
                     setLoading(false);
                     setError(`${data.error}`);
                     displayErrorMessage();
+                    setInputDisabled(false);
                 }
             });
     }
@@ -408,16 +420,16 @@ function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="edit-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} disabled={inputDisabled}><CloseIcon /></button>
                     <div className="form-group">
-                        <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })}></textarea>
-                        <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })}></textarea>
+                        <textarea className="fade fourth-fade-fast" name="title" placeholder="Title" maxlength="250" value={temp.title} onChange={(e) => setTemp({ title: e.target.value, description: temp.description })} readOnly={inputDisabled}></textarea>
+                        <textarea className="fade fifth-fade-fast" name="description" placeholder="Description (Optional)" maxLength="1000" rows="5" value={temp.description ??= ''} onChange={(e) => setTemp({ title: temp.title, description: e.target.value })} readOnly={inputDisabled}></textarea>
                     </div>
                     <div className="form-error fade sixth-fade-fast" style={errorStyle}>
                         {error}
                     </div>
                     <div className="form-group fade seventh-fade-fast">
-                        <button type="submit">Update</button>
+                        <button type="submit" disabled={inputDisabled}>Update</button>
                     </div>
                 </form>
             </div>
@@ -429,6 +441,7 @@ function EditDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
 function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
     const [error, setError] = useState();
     const [errorStyle, setErrorStyle] = useState();
+    const [inputDisabled, setInputDisabled] = useState(false);
 
     const handleClick = () => {
         closeModal();
@@ -436,6 +449,7 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setInputDisabled(true);
         const title = e.target.title.value;
         deleteDeck(title);
     }
@@ -472,7 +486,10 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
     }
 
     async function deleteDeck(title) {
-        if (!errorHandling(title)) return;
+        if (!errorHandling(title)) {
+            setInputDisabled(false);
+            return;
+        }
 
         setLoading(true);
 
@@ -493,29 +510,29 @@ function DeleteDeckModal({ closeModal, decks, index, setDecks, setLoading }) {
                     setLoading(false);
                     setError(`${data.error}`);
                     displayErrorMessage();
+                    setInputDisabled(false);
                 }
             });
     }
 
     const originalTitle = decks[index].title;
-    const [temp, setTemp] = useState({ title: decks[index].title });
 
     return createPortal(
         <div className="deck-modal-wrapper fade first-fade-fast">
             <div className="deck-modal fade second-fade-fast">
                 <form id="delete-deck-modal-form" onSubmit={handleSubmit}>
-                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick}><CloseIcon /></button>
+                    <button className="circular-button fade third-fade-fast" type="button" onClick={handleClick} disabled={inputDisabled}><CloseIcon /></button>
                     <div className="form-group fade fourth-fade-fast">
                         <span>Delete <span style={{color: '#5AB0FF'}}>{decks[index].title}</span>?</span>
                     </div>
                     <div className="form-group">
-                        <textarea className="fade fifth-fade-fast" name="title" placeholder="Type title here to verify" maxlength="250" onChange={(e) => setTemp({ title: e.target.value })}></textarea>
+                        <textarea className="fade fifth-fade-fast" name="title" placeholder="Type title here to verify" maxlength="250" readOnly={inputDisabled}></textarea>
                     </div>
                     <div className="form-error fade sixth-fade-fast" style={errorStyle}>
                         {error}
                     </div>
                     <div className="form-group fade seventh-fade-fast">
-                        <button className="warning-button" type="submit">Delete</button>
+                        <button className="warning-button" type="submit" disabled={inputDisabled}>Delete</button>
                     </div>
                 </form>
             </div>
